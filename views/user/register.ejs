@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>BOOM &mdash; Register</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
+    <link rel="stylesheet" href="fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="/user/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/user/css/magnific-popup.css">
+    <link rel="stylesheet" href="/user/css/jquery-ui.css">
+    <link rel="stylesheet" href="/user/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/user/css/owl.theme.default.min.css">
+
+    <link rel="stylesheet" href="/user/css/aos.css">
+    <link rel="stylesheet" href="/user/css/style.css">
+</head>
+<body>
+    <% if (typeof error !== 'undefined' && error === 'notfound') { %>
+        <div class="error-message" style="color:red">Please register then login.</div>
+        
+    <% } %>
+
+<div class="site-wrap">
+
+    <div class="custom-border-bottom py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-0"><strong class="text-black">Register</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOM logo -->
+    <div class="site-logo">
+        <a href="/user/index" class="js-logo-clone">BOOM</a>
+    </div>
+
+    <div class="site-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <form action="/user/register" method="POST" onsubmit="return validateForm()" class="p-5 bg-white">
+                        <span id="registerError"></span>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="username">Username</label>
+                                <input type="text" id="username" name="username" required class="form-control rounded-0">
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="email">Email</label>
+                                <input type="email" id="email" name="email" onkeyup="validateEmail()" required class="form-control rounded-0">
+                                <span id="emailError"></span>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="password">Password</label>
+                                <input type="password" id="password" name="password" class="form-control rounded-0" onblur="validatePassword()" >
+                                <span id="passwordError"></span>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="confirm-password">Confirm Password</label>
+                                <input type="password" id="confirm-password" name="confirmPassword" required class="form-control rounded-0" onblur="validateConfirmPassword()">
+                                <span id="confirmPasswordError"></span>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="phone-number">Phone Number</label>
+                                <input type="text" id="phone-number" name="phoneNumber" required class="form-control rounded-0">
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-black rounded-0 py-2 px-4">Register</button>
+                                <span id="registerError"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <p class="text-center mb-0">By clicking "Register", you agree to our <a href="#">terms and conditions</a>.</p>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <p class="text-center mb-0">You will receive an OTP for verification after registering.</p>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/user/js/jquery-3.3.1.min.js"></script>
+<script src="/user/js/jquery-ui.js"></script>
+<script src="/user/js/popper.min.js"></script>
+<script src="/user/js/bootstrap.min.js"></script>
+<script>
+
+
+function validateForm(){
+    var isValidateEmail=validateEmail()
+    var isValidatePassword=validatePassword()
+    var isValidateConfirmPassword=validateConfirmPassword()
+    if(isValidateEmail&&isValidatePassword&&isValidateConfirmPassword){
+        return true
+    }else{
+        let registerError=document.getElementById('registerError')
+        registerError.innerHTML="Fill all the fields properly"
+        registerError.style.color = 'red';
+        return false
+    }
+}
+
+    // Validate email function
+    function validateEmail() {
+        var emailError = document.getElementById('emailError');
+        var email = document.getElementById('email').value;
+        var emailPattern = /^[A-Za-z\._\-[0-9]+@[A-Za-z]+\.[a-z]{2,}$/;
+        if (!email.match(emailPattern)) {
+            emailError.innerHTML = "Email is invalid";
+            emailError.style.color = 'red';
+            return false;
+        } else {
+            emailError.innerHTML = '';
+            return true;
+        }
+    }
+
+    // Validate password function
+    function validatePassword() {
+        var passwordError = document.getElementById('passwordError');
+        var password = document.getElementById('password').value;
+        var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()-_+=<>?])[A-Za-z\d\S]{8,}$/;
+        if (!password.match(passwordPattern)) {
+            passwordError.innerHTML = 'Password shall meet the following criteria:<br>' +
+                'At least 8 characters in length<br>' +
+                'At least one letter shall be uppercase or lowercase<br>' +
+                'At least one special character<br>' +
+                'At least one digit';
+                passwordError.style.color = 'red';
+            return false;
+        } else {
+            passwordError.innerHTML = '';
+            return true;
+        }
+    }
+        function validateConfirmPassword(){
+            const password=document.getElementById('password').value
+            const confirmPassword=document.getElementById('confirm-password').value
+            if(password===confirmPassword){
+                return true
+            }else{
+                const confirmPasswordError=document.getElementById('passwordError')
+                confirmPasswordError.innerHTML="Password not matching"
+                confirmPasswordError.style.color = 'red';
+                return false
+            }
+        }
+    
+</script>
+
+</body>
+</html>

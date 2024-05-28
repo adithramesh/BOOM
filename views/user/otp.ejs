@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>OTP Verification</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
+    <link rel="stylesheet" href="fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="/user/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/user/css/magnific-popup.css">
+    <link rel="stylesheet" href="/user/css/jquery-ui.css">
+    <link rel="stylesheet" href="/user/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/user/css/owl.theme.default.min.css">
+
+    <link rel="stylesheet" href="/user/css/aos.css">
+    <link rel="stylesheet" href="/user/css/style.css">
+</head>
+<body>
+
+<div class="site-wrap">
+
+    <div class="custom-border-bottom py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-0"><strong class="text-black">OTP Verification</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOM logo -->
+    <div class="site-logo">
+        <a href="/user/index" class="js-logo-clone">BOOM</a>
+    </div>
+    <% if (messages.error) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= messages.error %>
+        </div>
+    <% } %>
+    
+    <% if (messages.success) { %>
+        <div class="alert alert-success" role="alert">
+            <%= messages.success %>
+        </div>
+    <% } %>
+    <div class="site-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <form action="/user/otp" method="POST" class="p-5 bg-white">
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="otp">Enter OTP</label>
+                                <input type="text" id="otp" name="otp" class="form-control rounded-0">
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <input type="submit" value="Verify OTP" class="btn btn-black rounded-0 py-2 px-4">
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <p class="text-center mb-0">Didn't receive OTP? <a href="/user/resend-otp" id="resend-otp" style="display:none">Resend OTP</a></p>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <p class="text-center mb-0">Time remaining: <span id="timer">60</span> seconds</p>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/user/js/jquery-3.3.1.min.js"></script>
+<script src="/user/js/jquery-ui.js"></script>
+<script src="/user/js/popper.min.js"></script>
+<script src="/user/js/bootstrap.min.js"></script>
+<script>
+    // Timer countdown
+    var seconds = 60;
+    function countdown() {
+        seconds--;
+        document.getElementById("timer").textContent = seconds;
+        if (seconds <= 0) {
+            clearInterval(timer);
+            document.getElementById('resend-otp').style.display="inline";
+        }
+    }
+    var timer = setInterval(countdown, 1000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>User Profile | BOOM</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
+    <link rel="stylesheet" href="fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="/user/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/user/css/magnific-popup.css">
+    <link rel="stylesheet" href="/user/css/jquery-ui.css">
+    <link rel="stylesheet" href="/user/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/user/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="/user/css/aos.css">
+    <link rel="stylesheet" href="/user/css/style.css">
+    
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .button-container button {
+            width: 100px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-item h4,
+        .profile-item p,
+        .profile-item .button-container,
+        .profile-item input {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="site-wrap">
+
+    <div class="site-navbar bg-white py-2">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="logo">
+                    <div class="site-logo">
+                        <a href="/user/index" class="js-logo-clone">BOOM</a>
+                    </div>
+                </div>
+
+                <div class="main-nav d-none d-lg-block">
+                    <nav class="site-navigation text-right text-md-center" role="navigation">
+                        <ul class="site-menu js-clone-nav d-none d-lg-block">
+                            <li class="has-children active">
+                                <a href="/user/index">Home</a>
+                                <ul class="dropdown">
+                                    <li><a href="#">Menu One</a></li>
+                                    <li><a href="#">Menu Two</a></li>
+                                    <li><a href="#">Menu Three</a></li>
+                                    <li class="has-children">
+                                        <a href="#">Sub Menu</a>
+                                        <ul class="dropdown">
+                                            <li><a href="#">Menu One</a></li>
+                                            <li><a href="#">Menu Two</a></li>
+                                            <li><a href="#">Menu Three</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li><a href="/user/shop">Shop</a></li>
+                            <li><a href="#">Catalogue</a></li>
+                            <li><a href="#">New Arrivals</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <div class="icons">
+                    <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
+                    <a href="/user/user-profile" class="icons-btn d-inline-block"><span class="icon-user"></span></a>
+                    <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
+                    <a href="/user/cart" class="icons-btn d-inline-block bag">
+                        <span class="icon-shopping-bag"></span>
+                        <span class="number">2</span>
+                    </a>
+                    <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span class="icon-menu"></span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breadcrumb navigation -->
+    <div class="bg-light py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-0"><a href="/user/index">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">User Profile</strong></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="site-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div id="profileContainer" class="text-center">
+                        <!-- <img src="path_to_profile_picture" alt="Profile Picture"> -->
+                        <p>Username: <span id="displayUsername"><%= username %></span></p>
+                        <p>Email: <span id="displayEmail"><%= email %></span></p>
+                        <p>Phone: <span id="displayPhone"><%= phoneNumber %></span></p>
+                        <div class="button-container mt-3">
+                            <button class="btn btn-secondary" onclick="enableProfileEdit()">Edit Profile</button>
+                        </div>
+                        <div  class="button-container mt-3">
+                            <a href="/user/checkout" class="btn btn-primary">Logout</a>
+                        </div>
+                    </div>
+                    <form id="profileForm" class="p-5 bg-white" style="display:none;" onsubmit="return validateProfile()">
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="username">Username</label>
+                                <input type="text" id="username" name="username" class="form-control rounded-0" required>
+                                <span id="usernameError" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="email">Email</label>
+                                <input type="email" id="email" name="email" class="form-control rounded-0" required>
+                                <span id="emailError" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="phone">Phone Number</label>
+                                <input type="text" id="phone" name="phone" class="form-control rounded-0" required>
+                                <span id="phoneError" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-black rounded-0 py-2 px-4">Save Profile</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <div class="text-center">
+                        <a href="/my-orders" class="btn btn-secondary">My Orders</a>
+                        <a href="/reset-password" class="btn btn-secondary">Reset Password</a>
+                        <a href="/coupons" class="btn btn-secondary">Coupons</a>
+                        <a href="/wallet" class="btn btn-secondary">Wallet</a>
+                        <a href="/user/address" class="btn btn-secondary">Addresses</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/user/js/jquery-3.3.1.min.js"></script>
+<script src="/user/js/jquery-ui.js"></script>
+<script src="/user/js/popper.min.js"></script>
+<script src="/user/js/bootstrap.min.js"></script>
+<script src="/user/js/owl.carousel.min.js"></script>
+<script src="/user/js/jquery.magnific-popup.min.js"></script>
+<script src="/user/js/aos.js"></script>
+<script src="/user/js/main.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        const response = await fetch('/user/user-profile');
+        if (response.ok) {
+            const userProfile = await response.json();
+            document.getElementById('displayUsername').textContent = userProfile.username;
+            document.getElementById('displayEmail').textContent = userProfile.email;
+            document.getElementById('displayPhone').textContent = userProfile.phone;
+        }
+    });
+
+    function enableProfileEdit() {
+        const profileContainer = document.getElementById('profileContainer');
+        document.getElementById('username').value = document.getElementById('displayUsername').textContent;
+        document.getElementById('email').value = document.getElementById('displayEmail').textContent;
+        document.getElementById('phone').value = document.getElementById('displayPhone').textContent;
+        profileContainer.style.display = 'none';
+        document.getElementById('profileForm').style.display = 'block';
+    }
+
+    document.getElementById('profileForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        if (!validateProfile()) return;
+
+        const profile = {
+            username: document.getElementById('username').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            phone: document.getElementById('phone').value.trim()
+        };
+
+        const response = await fetch('/user/user-profile', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(profile)
+        });
+
+        if (response.ok) {
+            const updatedUserProfile = await response.json();
+            document.getElementById('displayUsername').textContent = updatedUserProfile.username;
+            document.getElementById('displayEmail').textContent = updatedUserProfile.email;
+            document.getElementById('displayPhone').textContent = updatedUserProfile.phone;
+
+            document.getElementById('profileForm').style.display = 'none';
+            document.getElementById('profileContainer').style.display = 'block';
+        } else {
+            alert('Failed to update profile');
+        }
+    });
+
+    function validateProfile() {
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        let isValid = true;
+
+        if (!username) {
+            document.getElementById('usernameError').textContent = 'Username is required';
+            isValid = false;
+        } else {
+            document.getElementById('usernameError').textContent = '';
+        }
+
+        if (!email) {
+            document.getElementById('emailError').textContent = 'Email is required';
+            isValid = false;
+        } else {
+            document.getElementById('emailError').textContent = '';
+        }
+
+        if (!phone) {
+            document.getElementById('phoneError').textContent = 'Phone number is required';
+            isValid = false;
+        } else {
+            document.getElementById('phoneError').textContent = '';
+        }
+
+        return isValid;
+    }
+</script>
+
+</body>
+</html>

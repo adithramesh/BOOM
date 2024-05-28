@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>BOOM &mdash; Register</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
+    <link rel="stylesheet" href="fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="/user/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/user/css/magnific-popup.css">
+    <link rel="stylesheet" href="/user/css/jquery-ui.css">
+    <link rel="stylesheet" href="/user/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/user/css/owl.theme.default.min.css">
+
+    <link rel="stylesheet" href="/user/css/aos.css">
+    <link rel="stylesheet" href="/user/css/style.css">
+    <style>
+       .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Adjust the gap between buttons if needed */
+}
+
+.button-container button {
+    width: 100px; /* Set a fixed width for the buttons */
+    height: 40px; /* Set a fixed height for the buttons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.address-item h4,
+.address-item p,
+.address-item .button-container,
+.address-item input {
+    text-align: center; /* Center text inside address item if needed */
+}
+    </style>
+</head>
+<body>
+    <% if (typeof error !== 'undefined' && error === 'notfound') { %>
+        <div class="error-message" style="color:red">Please register then login.</div>
+        
+    <% } %>
+
+<div class="site-wrap">
+
+    <div class="custom-border-bottom py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-0"><strong class="text-black">Addresses</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOM logo -->
+    <div class="site-logo">
+        <a href="/user/index" class="js-logo-clone">BOOM</a>
+    </div>
+
+    <div class="custom-border-bottom py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-0"><strong class="text-black">Add Your Addresses</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="site-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form id="addressForm" class="p-5 bg-white"  onsubmit="return validateAddress()">
+                        <input type="hidden"  id="addressId" name="addressId">
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="userName">User's Name</label>
+                                <input type="text" id="userName" name="userName" class="form-control rounded-0" value="<%= user.username %>" required>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="addressType">Address Type</label>
+                                <select id="addressType" name="addressType" class="form-control rounded-0" required>
+                                    <option value="Home">Home Address</option>
+                                    <option value="Work">Work Address</option>
+                                    <option value="Other">Other Address</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="houseName">House Name/Number</label>
+                                <input type="text" id="houseName" name="houseName" class="form-control rounded-0" required>
+                                <span id="houseNameError" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="street">Street</label>
+                                <input type="text" id="street" name="street" class="form-control rounded-0" required>
+                                <span id="streetError" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="city">City</label>
+                                <input type="text" id="city" name="city" class="form-control rounded-0" required>
+                                <span id="cityError" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="state">State</label>
+                                <input type="text" id="state" name="state" class="form-control rounded-0" required>
+                                <span id="stateError" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="country">Country</label>
+                                <input type="text" id="country" name="country" class="form-control rounded-0" required>
+                                <span id="countryError" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="text-black" for="zipCode">Zip Code</label>
+                                <input type="text" id="zipCode" name="zipCode" class="form-control rounded-0" required>
+                                <span id="zipCodeError" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-black rounded-0 py-2 px-4" >Save Address</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="savedAddresses" class="p-5 bg-white mt-5">
+                        <h3 class="text-black">Saved Addresses</h3>
+                      <%if (savedAddress.length>0){ %>
+                        <% savedAddress.forEach(address=>{ %>
+                            <div class="address-item p-3 mb-3 bg-light">
+                                <h4><%= address.addressType%> Address</h4>
+                                <p><%= address.userName %>, <%= address.houseName %>, <%=address.street %>,<%=address.city %>,<%=address.state %>,<%=address.country %> - <%=address.zipCode %></p>
+                                <div class="button-container">
+                                <button class="btn btn-primary btn-sm" onclick="editAddress(this,'<%=address._id %>')">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteAddress(this, '<%=address._id %>')">Delete</button>
+                                </div>
+                            </div>
+                            <% }); %>
+                            <% } else { %>
+                                <p>No saved addresses found.</p>
+                            <% } %>    
+                                <!-- Saved addresses will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+<script src="/user/js/jquery-3.3.1.min.js"></script>
+<script src="/user/js/jquery-ui.js"></script>
+<script src="/user/js/popper.min.js"></script>
+<script src="/user/js/bootstrap.min.js"></script>
+<script>
+    document.getElementById('addressForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    if (!validateAddress()) {
+                return;
+            }
+            const addressId = document.getElementById('addressId').value;
+            const address = {
+                userName: document.getElementById('userName').value.trim(),
+                addressType: document.getElementById('addressType').value.trim(),
+                houseName: document.getElementById('houseName').value.trim(),
+                street: document.getElementById('street').value.trim(),
+                city: document.getElementById('city').value.trim(),
+                state: document.getElementById('state').value.trim(),
+                country: document.getElementById('country').value.trim(),
+                zipCode: document.getElementById('zipCode').value.trim()
+            };
+
+            let response;
+    if (addressId) {
+         // Editing an existing address
+         console.log(`addressId: ${addressId}`);
+            response = await fetch(`/user/address/${addressId}`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(address)
+            });
+    } else {
+        // Adding a new address
+        response = await fetch('/user/address', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(address)
+        });
+    }
+
+    if (response.ok) {
+        const savedAddress = await response.json();
+        if (addressId) {
+            updateAddressInUI(savedAddress);
+        } else {
+            addAddressToUI(savedAddress);
+        }
+        clearAddressForm();
+    }
+});
+
+function clearAddressForm() {
+    document.getElementById('addressForm').reset();
+    document.getElementById('addressId').value = '';
+}
+        function validateAddress() {
+            let errors = '';
+            const houseName = document.getElementById('houseName').value.trim();
+            const street = document.getElementById('street').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const state = document.getElementById('state').value.trim();
+            const country = document.getElementById('country').value.trim();
+            const zipCode = document.getElementById('zipCode').value.trim();
+
+            const houseNameError = document.getElementById('houseNameError');
+            const streetError = document.getElementById('streetError');
+            const cityError = document.getElementById('cityError');
+            const stateError = document.getElementById('stateError');
+            const countryError = document.getElementById('countryError');
+            const zipCodeError = document.getElementById('zipCodeError');
+
+            houseNameError.innerHTML = '';
+            streetError.innerHTML = '';
+            cityError.innerHTML = '';
+            stateError.innerHTML = '';
+            countryError.innerHTML = '';
+            zipCodeError.innerHTML = '';
+
+            const spacesRegex = /^\s*$/;
+
+            if (spacesRegex.test(houseName)) {
+                houseNameError.innerHTML = 'House Name/No. is required.';
+                errors += 'House Name/No. is required.\n';
+            }
+            if (spacesRegex.test(street)) {
+                streetError.innerHTML = 'Street is required.';
+                errors += 'Street is required.\n';
+            }
+            if (spacesRegex.test(city) || !/^[a-zA-Z\s]+$/.test(city)) {
+                cityError.innerHTML = 'City is required and must contain only letters.';
+                errors += 'City is required and must contain only letters.\n';
+            }
+            if (spacesRegex.test(state) || !/^[a-zA-Z\s]+$/.test(state)) {
+                stateError.innerHTML = 'State is required and must contain only letters.';
+                errors += 'State is required and must contain only letters.\n';
+            }
+            if (spacesRegex.test(country) || !/^[a-zA-Z\s]+$/.test(country)) {
+                countryError.innerHTML = 'Country is required and must contain only letters.';
+                errors += 'Country is required and must contain only letters.\n';
+            }
+            if (spacesRegex.test(zipCode) || !/^\d{6}$/.test(zipCode)) {
+                zipCodeError.innerHTML = 'Zip Code is required and must be a valid 6-digit number.';
+                errors += 'Zip Code is required and must be a valid 6-digit number.\n';
+            }
+
+            if (errors) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function addAddressToUI(address) {
+            const addressContainer = document.createElement('div');
+            addressContainer.classList.add('address-item', 'p-3', 'mb-3', 'bg-light');
+            addressContainer.setAttribute('data-id', address._id);
+            addressContainer.innerHTML = `
+                <h4>${address.addressType} Address</h4>
+                <p>${address.userName},${address.houseName}, ${address.street}, ${address.city}, ${address.state}, ${address.country} - ${address.zipCode}</p>
+                <div class="button-container">
+                      <button class="btn btn-primary btn-sm" onclick="editAddress(this, '${address._id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteAddress(this, '${address._id}')">Delete</button>
+        </div>
+            `;
+
+            document.getElementById('savedAddresses').appendChild(addressContainer);
+        }
+
+    </script>
+
+<script>
+
+function updateAddressInUI(address) {
+    const addressContainer = document.querySelector(`.address-item[data-id="${address._id}"]`);
+    if (addressContainer) {
+        addressContainer.querySelector('h4').innerText = `${address.addressType} Address`;
+        addressContainer.querySelector('p').innerText = `${address.houseName}, ${address.street}, ${address.city}, ${address.state}, ${address.country} - ${address.zipCode}`;
+    }
+}
+
+function editAddress(button, addressId) {
+    console.log("addressId", addressId);
+    
+    const addressItem = button.closest('.address-item');
+    document.getElementById('addressId').value = addressId;
+    document.getElementById('addressType').value = addressItem.querySelector('h4').innerText.replace(' Address', '');
+    const [username, houseName, street, city, state, countryZip] = addressItem.querySelector('p').innerText.split(',').map(detail => detail.trim());
+    document.getElementById('userName').value = username;
+    document.getElementById('houseName').value = houseName;
+    document.getElementById('street').value = street;
+    document.getElementById('city').value = city;
+    document.getElementById('state').value = state;
+    const [country, zipCode] = countryZip.split('-').map(detail => detail.trim());
+    document.getElementById('country').value = country;
+    document.getElementById('zipCode').value = zipCode;
+}
+
+async function deleteAddress(button, addressId) {
+    // Send a DELETE request to the server to remove the address
+    const response = await fetch(`/user/address/${addressId}`, {
+        method: 'DELETE'
+    });
+
+    // If the request is successful, remove the address item from the UI
+    if (response.ok) {
+        button.closest('.address-item').remove();
+    } else {
+        // If the request fails, alert the user
+        alert("Failed to delete address");
+    }
+}
+
+</script>
+
+</body>
+</html>
