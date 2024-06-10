@@ -1,6 +1,6 @@
 exports.isAuth=(req,res,next)=>{
     try{
-        if(!req.session.isAuth){
+        if(!req.session.isAdAuth){
             res.redirect('/admin/login')
         }else{
             next();

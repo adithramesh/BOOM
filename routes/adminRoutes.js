@@ -18,6 +18,8 @@ router.post('/update-customer-status',protectRoute.isAuth,adminControllers.postU
 
 router.get('/products',protectRoute.isAuth,adminControllers.getProductPage)
 
+router.delete('/remove-product',protectRoute.isAuth,adminControllers.postRemoveProduct)
+
 router.get('/edit-product/:id',protectRoute.isAuth,adminControllers.getEditProduct)
 
 router.post('/edit-product/:id',protectRoute.isAuth,adminControllers.upload.any(),adminControllers.postEditProduct)
@@ -39,6 +41,14 @@ router.post('/edit-category/:id',protectRoute.isAuth,adminControllers.postEditCa
 router.get('/add-category',protectRoute.isAuth,adminControllers.getAddCategories)
 
 router.post('/add-category',adminControllers.postAddCategories)
+
+router.get('/orders',protectRoute.isAuth,adminControllers.getOrders)
+
+router.post('/update-order-status',protectRoute.isAuth,adminControllers.postUpdateOrderStatus)
+
+// router.get('/edit-order/:id',protectRoute.isAuth,adminControllers.getEditOrder)
+
+// router.post('/edit-order/:id',protectRoute.isAuth,adminControllers.postEditOrder)
 
 router.get('/logout',protectRoute.isAuth,adminControllers.getLogoutPage)
 

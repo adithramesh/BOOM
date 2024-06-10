@@ -16,78 +16,111 @@
 
     <link rel="stylesheet" href="/user/css/aos.css">
     <link rel="stylesheet" href="/user/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         /* Adjust button size */
         .btn-google, .btn-facebook {
             width: calc(100% - 34px); /* Adjust width */
             margin-bottom: 10px; /* Adjust the margin as needed */
         }
+        .input-group {
+    position: relative;
+}
+
+.input-group-append {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+#togglePassword {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+.forgot-password-link {
+        display: inline-block;
+        margin-top: 25px; /* Adjust this value as needed */
+    }
     </style>
 </head>
 <body>
+    <div class="site-wrap">
 
-<div class="site-wrap">
-
-    <div class="custom-border-bottom py-3">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 mb-0"><strong class="text-black">Login</strong></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- BOOM logo -->
-    <div class="site-logo">
-        <a href="/user/index" class="js-logo-clone">BOOM</a>
-    </div>
-    <% if(expressFlash.passworderror){%>
-        <div style="color: red; font-size: 16px; font-weight: bold;">
-            <%= expressFlash.passworderror%>
-        </div>
-            <%}%>
-
-            <% if(expressFlash.emailerror){%>
-                <div style="color: red; font-size: 16px; font-weight: bold;">
-                    <%= expressFlash.emailerror%>
-                </div>
-                           <%}%>
-
-    <div class="site-section">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-5">
-                    <form action="/user/login" method="POST" class="p-5 bg-white" onsubmit="return validateForm()">
-                        <span id="loginError"></span>
-
-                        <div class="row form-group">
-                            <div class="col-md-12">
-                                <label class="text-black" for="email">Email</label> 
-                                <input type="email" id="email" name='email' onkeyup="validateEmail()" required class="form-control rounded-0">
-                                <span id="emailError"></span>
-                            </div>
-                        </div>
-
-                        <div class="row form-group">
-                            <div class="col-md-12">
-                                <label class="text-black" for="password">Password</label> 
-                                <input type="password" id="password" name="password" onblur="validatePassword()" required class="form-control rounded-0">
-                                <span id="passwordError"></span>
-                            </div>
-                        </div>
-
-                        <div class="row form-group">
-                            <div class="col-md-12">
-                                <input type="submit" value="Login" class="btn btn-black rounded-0 py-2 px-4" onsubmit="validateForm()">
-                                
-                            </div>
-                        </div>
-                    </form>
+        <div class="custom-border-bottom py-3">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 mb-0"><strong class="text-black">Login</strong></div>
                 </div>
             </div>
         </div>
+    
+        <!-- BOOM logo -->
+        <div class="site-logo">
+            <a href="/user/index" class="js-logo-clone">BOOM</a>
+        </div>
+        <% if (messages.error) { %>
+            <div style="color: red; font-size: 16px; font-weight: bold;">
+                <%= messages.error %>
+            </div>
+        <% } %>
+    
+        <% if (messages.success) { %>
+            <div style="color: green; font-size: 16px; font-weight: bold;">
+                <%= messages.success %>
+            </div>
+        <% } %>        
+    
+        <div class="site-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-5">
+                        <form action="/user/login" method="POST" class="p-5 bg-white" onsubmit="return validateForm()">
+                            <span id="loginError"></span>
+    
+                            <div class="row form-group">
+                                <div class="col-md-12">
+                                    <label class="text-black" for="email">Email</label> 
+                                    <input type="email" id="email" name='email' onkeyup="validateEmail()" required class="form-control rounded-0">
+                                    <span id="emailError"></span>
+                                </div>
+                            </div>
+    
+                            <div class="row form-group">
+                                <div class="col-md-12">
+                                    <label class="text-black" for="password">Password</label>
+                                    <div class="input-group">
+                                        <input type="password" id="password" name="password" onblur="validatePassword()" required class="form-control rounded-0">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <span id="passwordError"></span>
+                                </div>
+                            </div>
+    
+                            <div class="row form-group align-items-center">
+                                <div class="col-md-6">
+                                    <input type="submit" value="Login" class="btn btn-black rounded-0 py-2 px-4" onsubmit="validateForm()">
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <a href="/user/forgot-password" class="text-primary forgot-password-link">Forgot Password?</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-</div>
+    
+                
 <div class="text-center small text-muted mb-15">or Log in with</div>
 
 <!-- Sign in with Google button -->
@@ -117,55 +150,6 @@
 <script src="/user/js/aos.js"></script>
 
 <script src="/user/js/main.js"></script>
-<script>
-
-function validateForm(){
-    var isValidateEmail=validateEmail()
-    var isValidatePassword=validatePassword()
-    // var isValidateConfirmPassword=validateConfirmPassword()
-    if(isValidateEmail&&isValidatePassword){
-        return true
-    }else{
-        let loginError=document.getElementById('loginError')
-        loginError.innerHTML="Fill all the fields properly"
-        loginError.style.color = 'red';
-        return false
-    }
-}
-    // Validate email function
-    function validateEmail() {
-        var emailError = document.getElementById('emailError');
-        var email = document.getElementById('email').value;
-        var emailPattern = /^[A-Za-z\._\-[0-9]+@[A-Za-z]+\.[a-z]{2,}$/;
-        if (!email.match(emailPattern)) {
-            emailError.innerHTML = "Email is invalid";
-            emailError.style.color = 'red';
-            return false;
-        } else {
-            emailError.innerHTML = '';
-            return true;
-        }
-    }
-
-    // Validate password function
-    function validatePassword() {
-        var passwordError = document.getElementById('passwordError');
-        var password = document.getElementById('password').value;
-        var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()-_+=<>?])[A-Za-z\d\S]{8,}$/;
-        if (!password.match(passwordPattern)) {
-            passwordError.innerHTML = 'Password shall meet the following criteria:<br>' +
-                'At least 8 characters in length<br>' +
-                'At least one letter shall be uppercase or lowercase<br>' +
-                'At least one special character<br>' +
-                'At least one digit';
-            passwordError.style.color = 'red';
-            return false;
-        } else {
-            passwordError.innerHTML = '';
-            return true;
-        }
-    }
-</script>
 
 </body>
 </html>

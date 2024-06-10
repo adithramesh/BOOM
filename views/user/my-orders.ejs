@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>My Orders &mdash; BOOM</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
+    <link rel="stylesheet" href="fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="/user/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/user/css/magnific-popup.css">
+    <link rel="stylesheet" href="/user/css/jquery-ui.css">
+    <link rel="stylesheet" href="/user/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/user/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="/user/css/aos.css">
+    <link rel="stylesheet" href="/user/css/style.css">
+    <style>
+        .order-table th, .order-table td {
+            vertical-align: middle;
+        }
+        .order-items {
+            display: none;
+        }
+        .order-item-details {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+  <div class="site-wrap">
+
+    <div class="site-navbar bg-white py-2">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="logo">
+                    <div class="site-logo">
+                        <a href="/user/index" class="js-logo-clone">BOOM</a>
+                    </div>
+                </div>
+
+                <div class="main-nav d-none d-lg-block">
+                    <nav class="site-navigation text-right text-md-center" role="navigation">
+                        <ul class="site-menu js-clone-nav d-none d-lg-block">
+                            <li class="has-children active">
+                                <a href="/user/index">Home</a>
+                                <ul class="dropdown">
+                                    <li><a href="#">Menu One</a></li>
+                                    <li><a href="#">Menu Two</a></li>
+                                    <li><a href="#">Menu Three</a></li>
+                                    <li class="has-children">
+                                        <a href="#">Sub Menu</a>
+                                        <ul class="dropdown">
+                                            <li><a href="#">Menu One</a></li>
+                                            <li><a href="#">Menu Two</a></li>
+                                            <li><a href="#">Menu Three</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li><a href="/user/shop">Shop</a></li>
+                            <li><a href="#">Catalogue</a></li>
+                            <li><a href="#">New Arrivals</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <div class="icons">
+                    <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
+                    <a href="/user/user-profile" class="icons-btn d-inline-block"><span class="icon-user"></span></a>
+                    <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
+                    <a href="/user/cart" class="icons-btn d-inline-block bag">
+                        <span class="icon-shopping-bag"></span>
+                        <!-- <span class="number">2</span> -->
+                    </a>
+                    <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span class="icon-menu"></span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+            <!-- Breadcrumbs -->
+            <div class="bg-light py-3">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-12 mb-0"><a href="/user/index">Home</a> <span class="mx-2 mb-0">/ <a href="/user/user-profile">Profile</a> <span class="mx-2 mb-0">/ </span> <strong class="text-black">Shop</strong></div>
+                </div>
+              </div>
+            </div>
+
+        <div class="site-section">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-md-12 text-center">
+                        <h2 class="display-4">My Orders</h2>
+                    </div>
+                </div>
+
+                <% if (orders.length > 0) { %>
+                    <table class="table table-bordered order-table">
+                        <thead>
+                            <tr>
+                                <th>Sl. No.</th>
+                                <th>Order ID</th>
+                                <th>Order Date</th>
+                                <th>Order Time</th>
+                                <th>Order Status</th>
+                                <th>Payment Method</th>
+                                <th>Delivery Address</th>
+                                <th>Total Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% orders.forEach((order, index) => { %>
+                                <tr class="order-item-details" data-toggle="order-items-<%= order._id %>">
+                                    <td><%= index + 1 %></td>
+                                    <td><%= order.orderId %></td>
+                                    <td><%= order.date.toDateString() %></td>
+                                    <td><%= order.date.toTimeString().split(' ')[0] %></td>
+                                    <td><%= order.orderStatus %></td>
+                                    <td><%= order.paymentOption %></td>
+                                    <td><%= order.deliveryAddress %></td>
+                                    <td>₹<%= order.amount %></td>
+                                    <td>
+                                        <% if (order.orderStatus === 'Pending') { %>
+                                            <form action="/user/orders/cancel/<%= order._id %>" method="GET" class="d-inline">
+                                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                            </form>
+                                        <% } %>
+                                        <button class="btn btn-info btn-sm" onclick="toggleOrderItems('<%= order._id %>')">View Items</button>
+                                    </td>
+                                </tr>
+                                <tr id="order-items-<%= order._id %>" class="order-items">
+                                    <td colspan="8">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sl. No.</th>
+                                                    <th>Product Name</th>
+                                                    <th>Size</th>
+                                                    <th>Quantity</th>
+                                                    <th>Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% order.items.forEach((item,index) => { %>
+                                                    <tr>
+                                                        <td><%= index + 1 %></td>
+                                                        <td><%= item.product ? item.product.name : 'Unknown Product' %></td>
+                                                        <td> <%= item.size %></td>    
+                                                        <td><%= item.quantity %></td>
+                                                        <td>₹<%= item.price %></td>
+                                                    </tr>
+                                                <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>No orders found.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+ <!-- Include your footer template here -->
+    <script src="/user/js/jquery-3.3.1.min.js"></script>
+    <script src="/user/js/jquery-ui.js"></script>
+    <script src="/user/js/popper.min.js"></script>
+    <script src="/user/js/bootstrap.min.js"></script>
+    <script src="/user/js/owl.carousel.min.js"></script>
+    <script src="/user/js/jquery.magnific-popup.min.js"></script>
+    <script src="/user/js/aos.js"></script>
+    <script src="/user/js/main.js"></script>
+    <script>
+        function toggleOrderItems(orderId) {
+            $('#order-items-' + orderId).toggle();
+        }
+    </script>
+</body>
+</html>

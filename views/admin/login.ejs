@@ -22,11 +22,34 @@
     <link rel="shortcut icon" type="image/x-icon" href="/admin/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link href="/admin/css/main.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .input-group {
+            position: relative;
+        }
+
+        .input-group-append {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        #togglePassword {
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
     <main>
         <section class="content-main mt-80 mb-80">
+
             <div class="card mx-auto card-login">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Admin Login</h4>
@@ -35,22 +58,46 @@
                             <h1>BOOM</h1>
                         </div>
                     </div>
-                    <form method="POST" action="/admin/login"  onsubmit="return validateForm()">
+
+                    <% if (messages.error) { %>
+                        <div style="color: red; font-size: 16px; font-weight: bold;">
+                            <%= messages.error %>
+                        </div>
+                    <% } %>
+            
+                    <% if (messages.success) { %>
+                        <div style="color: green; font-size: 16px; font-weight: bold;">
+                            <%= messages.success %>
+                        </div>
+                    <% } %>        
+                   
+                    <form method="POST" action="/admin/login" onsubmit="return validateForm()">
                         <div class="mb-3">
                             <input class="form-control" placeholder="Username or email" type="text" name="email" id="email" onkeyup="validateEmail()" required class="form-control rounded-0">
                             <span id="emailError"></span>
                         </div> <!-- form-group// -->
+                    
                         <div class="mb-3">
-                            <input class="form-control" placeholder="Password" type="password" name="password" id="password" onkeyup="validatePassword()" required class="form-control rounded-0">
+                            <div class="input-group">
+                                <input class="form-control" placeholder="Password" type="password" name="password" id="password" onkeyup="validatePassword()" required class="form-control rounded-0">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
                             <span id="passwordError"></span>
-                        </div> <!-- form-group// -->
+                        </div>
+                    
                         <div class="mb-4">
-                            <button type="submit" class="btn btn-primary w-100" onsubmit="validateForm()"> Login </button>
+                            <button type="submit" class="btn btn-primary w-100" onsubmit="validateForm()">Login</button>
                         </div> <!-- form-group// -->
                     </form>
                 </div>
             </div>
+            
         </section>
+        
     </main>
     <footer class="main-footer text-center">
         <p class="font-xs">
@@ -113,6 +160,17 @@
                     return true;
                 }
             }
+        </script>
+         <script>
+            document.getElementById('togglePassword').addEventListener('click', function (e) {
+                // toggle the type attribute
+                const password = document.getElementById('password');
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                
+                // toggle the eye slash icon
+                this.classList.toggle('fa-eye-slash');
+            });
         </script>
 </body>
 

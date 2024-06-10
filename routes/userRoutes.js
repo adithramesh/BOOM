@@ -14,9 +14,25 @@ router.post("/add-cart",userControllers.postAddToCart)
 
 router.get("/cart",userControllers.getCartPage)
 
-router.get("/user-profile",userControllers.getUserProfile)
+router.get("/cart/remove",userControllers.removeCartItems)
+
+router.post('/cart/update-quantity',userControllers.updateCartQuantity)
+
+router.get("/proceed-checkout",userControllers.getProceedToCheckout)
+
+router.post("/orders/status",userControllers.postOrderStatus)
+
+router.get("/user-profile",protectRoute.ifLogged,userControllers.getUserProfile)
 
 router.put("/user-profile",userControllers.editUserProfile)
+
+router.get('/my-orders', userControllers.getOrders);
+
+router.get('/orders/cancel/:id', userControllers.cancelOrder);
+
+router.get('/reset-password',userControllers.getResetPassword)
+
+router.post('/reset-password',userControllers.postResetPassword)
 
 router.get("/address",userControllers.getAddress)
 
@@ -30,7 +46,7 @@ router.get("/register",userControllers.getRegisterPage)
 
 router.post('/register',userControllers.postRegisterPage)
 
-router.get("/otp",protectRoute.ifLogged,userControllers.getOtp)
+router.get("/otp",protectRoute.ifLogged,userControllers.getOtp)  //protectRoute.ifLogged,
 
 router.post("/otp",userControllers.postOtp)
 
@@ -40,7 +56,15 @@ router.get("/login",userControllers.getLoginPage)
 
 router.post('/login',userControllers.postLoginPage)
 
-router.get('/checkout',userControllers.getCheckoutPage)
+router.get("/forgot-password",userControllers.getForgotPasswordPage)
+
+router.post("/forgot-password",userControllers.postForgotPasswordPage)
+
+router.get("/reset-password-login",userControllers.getResetPasswordAtLogin)
+
+router.post("/reset-password-login",userControllers.postResetPasswordAtLogin)
+
+router.get('/logout',userControllers.getlogoutPage)
 
 
 module.exports=router;

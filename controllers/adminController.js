@@ -1,13 +1,15 @@
 const Product = require('../models/products');
 const User=require('../models/users');
 const Category=require('../models/categories')
+const Address=require('../models/address')
+const Order=require('../models/order')
 const multer=require('multer')
 const bcrypt=require('bcrypt')
 
 exports.getLoginPage=((req,res)=>{
     try{
       
-        if(req.session.isAuth){
+        if(req.session.isAdAuth){
             return res.redirect('/admin/dashboard')
         }else {
             console.log('else case in get admin login page');
@@ -26,15 +28,31 @@ exports.postLoginPage=(async(req,res)=>{
     try{
         console.log("inside post admin login page");
         const {email,password}= req.body
+        console.log("email:",email);
+        console.log("password:", password);
         const admin=await User.findOne({email})
-        if(!admin){
+        console.log("admin:",admin);
+        if(admin.isAdmin===false){
             console.log("inside post admin with invalid admin");
+            req.flash('error','You are not an Admin')
             return res.redirect('/admin/login')
         }
-        if(admin.isAdmin==true && await bcrypt.compare(password,admin.password)){
-            req.session.isAuth=true;
+
+        if(admin.isBlocked){
+            req.flash('error', 'Your account is blocked');
+            req.session.destroy(); // Clear any existing session
+            return res.redirect('/admin/login');
+        }
+        const isCorrectPassword=await bcrypt.compare(password,admin.password)
+        if(!isCorrectPassword){
+            req.flash('error','Password do not match')
+            return res.redirect('/admin/login')
+        }
+
+        // if everything is correct       
+        req.session.isAdAuth=true;
         return res.redirect("/admin/dashboard")
-    }
+ 
         }
     catch(err){
         console.error('Error in logging in as an admin',err);
@@ -44,7 +62,7 @@ exports.postLoginPage=(async(req,res)=>{
 
 exports.getDashboardPage=((req,res)=>{
     try{
-        if(req.session.isAuth){
+        if(req.session.isAdAuth){
             console.log("inside admin dashboard page");
             return res.render("admin/dashboard")
         }else{
@@ -88,7 +106,7 @@ exports.postUpdateCustomerStatus=(async(req,res)=>{
 
 exports.getProductPage=(async(req,res)=>{
     try{
-        const products = await Product.find().populate('category').exec();
+        const products = await Product.find().populate('category').sort({ createdAt: -1 }).exec();
         console.log("inside product page");
         res.render("admin/products",{products})
     }catch(err){
@@ -96,7 +114,17 @@ exports.getProductPage=(async(req,res)=>{
     }
     
 })
-
+exports.postRemoveProduct=async(req,res)=>{
+    try{
+        console.log("inside admin remove product");
+        const productId=req.query.productId;
+        console.log("productId :",productId);
+        await Product.findOneAndDelete({_id:productId})
+        res.status(200).json({ message: 'Product deleted successfully' });
+    }catch(err){
+        console.error('Error in deleting product',err);
+    }
+}
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'public/admin/uploads/'); // Specify the desired destination directory
@@ -116,28 +144,13 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-
-
-  const upload = multer({ storage: storage, fileFilter: fileFilter });
-
+ const upload = multer({ storage: storage, fileFilter: fileFilter });
  exports.upload=upload;
 
 
   exports.getAddProducts=(async(req,res)=>{
     try {
-        // Define categories and subcategories
-        // const preCategories = [
-        //     { name: "Men's Clothing", subcategories: ["Shirts", "Pants", "Jackets", "Suits", "Activewear"] },
-        //     { name: "Women's Clothing", subcategories: ["Dresses", "Tops", "Skirts", "Pants", "Activewear"] },
-        //     { name: "Accessories", subcategories: ["Hats", "Belts", "Scarves", "Gloves", "Socks"] },
-        //     { name: "Shoes", subcategories: ["Sneakers", "Boots", "Sandals", "Dress Shoes", "Athletic Shoes"] },
-        //     { name: "Bags & Backpacks", subcategories: ["Handbags", "Shoulder Bags", "Backpacks", "Tote Bags", "Wallets"] },
-        //     { name: "Sale & Clearance", subcategories: ["Discounted Items", "Clearance Sales"] }
-        // ];
-
         const categories=await Category.find()
-        // const categories=[...preCategories,...dbCategories]
-       
         res.render('admin/add-products', { categories });
     } catch (error) {
         console.error(error);
@@ -218,9 +231,9 @@ exports.postEditProduct = async (req, res) => {
 
 exports.postAddProducts = async (req, res) => {
     try {
-        const { name, description, price, colour, quantity, category, sizes } = req.body;
+        const { name, description, price, colour, quantities, category, sizes } = req.body;
 
-        if (!name || !description || !price || !colour || !quantity || !sizes  || !category) {
+        if (!name || !description || !price || !colour || !quantities || !sizes  || !category) {
             req.flash('error', "All fields shall be filled properly");
             return res.redirect('/admin/add-product');
         }
@@ -236,19 +249,22 @@ exports.postAddProducts = async (req, res) => {
             images = [];  // No files uploaded
         }
 
+        const sizeQuantityArray = sizes.map(size => ({
+            size,
+            quantity: quantities[size] || 0 // Use the corresponding quantity for each size
+        }));
+
         const newProduct = {
             name,
             description,
             price,
             colour,
-            quantity,
             category,
             images,
-            size: Array.isArray(sizes) ? sizes : [sizes] // Ensure size is an array
+            sizes: sizeQuantityArray
         };
 
         console.log("new product:", newProduct);
-
         await Product.create(newProduct);
         res.redirect("/admin/products");
         // res.status(201).json(newProduct);
@@ -257,6 +273,47 @@ exports.postAddProducts = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+// exports.postAddProducts = async (req, res) => {
+//     try {
+//         const { name, description, price, colour, quantity, category, sizes } = req.body;
+
+//         if (!name || !description || !price || !colour || !quantity || !sizes  || !category) {
+//             req.flash('error', "All fields shall be filled properly");
+//             return res.redirect('/admin/add-product');
+//         }
+
+//         console.log("req.files", req.files);
+
+//         let images;
+//         if (req.files && req.files.length > 0) {
+//             images = req.files.map(file => '/admin/uploads/' + file.filename); // Assuming files are saved with path
+//         } else if (req.file) {
+//             images = ['/admin/uploads/' + req.file.filename];
+//         } else {
+//             images = [];  // No files uploaded
+//         }
+
+//         const newProduct = {
+//             name,
+//             description,
+//             price,
+//             colour,
+//             quantity,
+//             category,
+//             images,
+//             size: Array.isArray(sizes) ? sizes : [sizes] // Ensure size is an array
+//         };
+
+//         console.log("new product:", newProduct);
+//         await Product.create(newProduct);
+//         res.redirect("/admin/products");
+//         // res.status(201).json(newProduct);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// };
 
   async function countProductsForCategory(categoryId) {
     try {
@@ -272,14 +329,11 @@ exports.postAddProducts = async (req, res) => {
 exports.getCategories=async(req,res)=>{
     try{
         let categories= await Category.find().populate('products').exec()
-        
         // console.log("categories",categories);
-
         const countPromises=categories.map(async category=>{
             const productCount= await countProductsForCategory(category._id);
             return {...category.toJSON(), productCount}
         })
-
         const categoriesWithProductCount= await Promise.all(countPromises)
         // console.log("categoryCount:",categoriesWithProductCount);
         return res.render('admin/categories',{categories, categoriesWithProductCount})
@@ -292,7 +346,6 @@ exports.getCategories=async(req,res)=>{
 exports.getEditCategory=async(req,res)=>{
     try {
         const category = await Category.findById(req.params.id);
-    
         res.render('admin/edit-category', { category });
     } catch (error) {
         console.error(error);
@@ -303,10 +356,8 @@ exports.getEditCategory=async(req,res)=>{
 exports.postEditCategory = async (req, res) => {
     try {
         const categoryId = req.params.id;
-
         // Update the product in the database using req.body
         await Category.findByIdAndUpdate(categoryId, req.body);
-
         // Redirect or send a response indicating success
         res.redirect("/admin/categories");
     } catch (error) {
@@ -361,14 +412,70 @@ exports.postAddCategories=async(req,res)=>{
     }
 }
 
+exports.getOrders=async(req,res)=>{
+    try{
+        const orders = await Order.find().sort({ createdAt: -1 }).populate('items.product').exec();
+                return res.render('admin/orders',{orders})
+    }catch(err){
+        console.error("Error in fetching categories",err);
+    }
+}
+
+// exports.getEditOrder=async(req,res)=>{
+//     try {
+//         console.log("inside admin change stats/ edit order page");
+//         const order = await Order.findById(req.params.id).populate('items.product').exec(); // Populate the product field in items
+//         console.log("status:",order.orderStatus);
+//         res.redirect('/admin/orders', { order });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// }
+
+// exports.postEditOrder = async (req, res) => {
+//     try {
+//         const orderId = req.params.id;
+//         // Update the product in the database using req.body
+//         await Order.findByIdAndUpdate(orderId, req.body);
+//         // Redirect or send a response indicating success
+//         res.redirect("/admin/orders");
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// };
+
+exports.postUpdateOrderStatus=(async(req,res)=>{
+    try{
+        console.log("inside post update order/change status");
+        const {orderId, status}=req.body
+        const order=await Order.findById(orderId)
+
+        console.log("order selected:", order);
+
+        if(!order){
+            return res.status(200).send("product not found")
+        }else{
+            console.log("status from drop down:",status);
+            order.orderStatus=status;
+            await order.save();
+            return res.redirect('/admin/orders')
+        }
+
+    }catch(err){
+        console.error("error in updating the status of the order",err);
+        res.redirect('/admin/dashboard')
+    }
+})
+
 
 exports.getLogoutPage=(req,res)=>{
     try {
-       
-        if (!req.session.isAuth) {
+        if (!req.session.isAdAuth) {
             return res.redirect('/admin/login');
         }
-        req.session.isAuth = false;
+        req.session.isAdAuth = false;
         return res.redirect('/admin/login');
     } catch (err) {
         console.error("Error in logging out", err);

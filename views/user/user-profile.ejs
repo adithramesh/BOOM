@@ -86,7 +86,7 @@
                     <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
                     <a href="/user/cart" class="icons-btn d-inline-block bag">
                         <span class="icon-shopping-bag"></span>
-                        <span class="number">2</span>
+                        <!-- <span class="number">2</span> -->
                     </a>
                     <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span class="icon-menu"></span></a>
                 </div>
@@ -116,7 +116,7 @@
                             <button class="btn btn-secondary" onclick="enableProfileEdit()">Edit Profile</button>
                         </div>
                         <div  class="button-container mt-3">
-                            <a href="/user/checkout" class="btn btn-primary">Logout</a>
+                            <a href="/user/logout" class="btn btn-primary">Logout</a>
                         </div>
                     </div>
                     <form id="profileForm" class="p-5 bg-white" style="display:none;" onsubmit="return validateProfile()">
@@ -152,8 +152,8 @@
             <div class="row mt-5">
                 <div class="col-md-12">
                     <div class="text-center">
-                        <a href="/my-orders" class="btn btn-secondary">My Orders</a>
-                        <a href="/reset-password" class="btn btn-secondary">Reset Password</a>
+                        <a href="/user/my-orders" class="btn btn-secondary">My Orders</a>
+                        <a href="/user/reset-password" class="btn btn-secondary">Reset Password</a>
                         <a href="/coupons" class="btn btn-secondary">Coupons</a>
                         <a href="/wallet" class="btn btn-secondary">Wallet</a>
                         <a href="/user/address" class="btn btn-secondary">Addresses</a>
@@ -215,7 +215,7 @@
         if (response.ok) {
             const updatedUserProfile = await response.json();
             document.getElementById('displayUsername').textContent = updatedUserProfile.username;
-            document.getElementById('displayEmail').textContent = updatedUserProfile.email;
+            document.getElementById('displayEmail').textContent = updatedUserProfile.email;  
             document.getElementById('displayPhone').textContent = updatedUserProfile.phone;
 
             document.getElementById('profileForm').style.display = 'none';

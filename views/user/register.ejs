@@ -16,6 +16,27 @@
 
     <link rel="stylesheet" href="/user/css/aos.css">
     <link rel="stylesheet" href="/user/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+       .col-md-12 {
+    position: relative;
+}
+.input-group-append {
+    position: absolute;
+    right: 30px; /* Adjust as necessary to fit your design */
+    top: 75%;
+    transform: translateY(-50%);
+    z-index: 1; /* Ensure the button is above the input field */
+}
+
+#togglePassword {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+} */
+    </style>
 </head>
 <body>
     <% if (typeof error !== 'undefined' && error === 'notfound') { %>
@@ -64,6 +85,11 @@
                             <div class="col-md-12">
                                 <label class="text-black" for="password">Password</label>
                                 <input type="password" id="password" name="password" class="form-control rounded-0" onblur="validatePassword()" >
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
                                 <span id="passwordError"></span>
                             </div>
                         </div>
@@ -71,6 +97,11 @@
                             <div class="col-md-12">
                                 <label class="text-black" for="confirm-password">Confirm Password</label>
                                 <input type="password" id="confirm-password" name="confirmPassword" required class="form-control rounded-0" onblur="validateConfirmPassword()">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
                                 <span id="confirmPasswordError"></span>
                             </div>
                         </div>
@@ -176,6 +207,17 @@ function validateForm(){
             }
         }
     
+</script>
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function (e) {
+        // toggle the type attribute
+        const password = document.getElementById('password');
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
 </script>
 
 </body>

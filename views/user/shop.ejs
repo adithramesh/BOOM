@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>BOOM &mdash; Colorlib e-Commerce Template</title>
+    <title>BOOM &mdash; Apparel Shopping</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -116,9 +116,9 @@
             <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
             <a href="/user/user-profile" class="icons-btn d-inline-block"><span class="icon-user"></span></a>
             <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
-            <a href="cart.html" class="icons-btn d-inline-block bag">
+            <a href="/user/cart" class="icons-btn d-inline-block bag">
               <span class="icon-shopping-bag"></span>
-              <span class="number">2</span>
+              <!-- <span class="number">2</span> -->
             </a>
             <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span class="icon-menu"></span></a>
           </div>
@@ -180,20 +180,23 @@
                     </div>
                   </div>
                   <div class="btn-group">
-                    <button type="button" class="btn btn-white btn-sm dropdown-toggle px-4" id="dropdownMenuReference" data-toggle="dropdown">Reference</button>
+                    <button type="button" class="btn btn-white btn-sm dropdown-toggle px-4" id="dropdownMenuReference" data-toggle="dropdown">Sort By</button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
-                      <a class="dropdown-item" href="#">Relevance</a>
-                      <a class="dropdown-item" href="#">Name, A to Z</a>
-                      <a class="dropdown-item" href="#">Name, Z to A</a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">Price, low to high</a>
-                      <a class="dropdown-item" href="#">Price, high to low</a>
+                      <!-- <a class="dropdown-item" href="#" onclick="sortProducts('popularity')">Popularity</a> -->
+                      <a class="dropdown-item" href="#" onclick="sortProducts('priceAsc')">Price, low to high</a>
+                      <a class="dropdown-item" href="#" onclick="sortProducts('priceDesc')">Price, high to low</a>
+                      <!-- <a class="dropdown-item" href="#" onclick="sortProducts('ratings')">Average Ratings</a>
+                      <a class="dropdown-item" href="#" onclick="sortProducts('featured')">Featured</a>
+                      <a class="dropdown-item" href="#" onclick="sortProducts('newArrivals')">New Arrivals</a> -->
+                      <a class="dropdown-item" href="#" onclick="sortProducts('nameAsc')">Name, A to Z</a>
+                      <a class="dropdown-item" href="#" onclick="sortProducts('nameDesc')">Name, Z to A</a>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="row mb-5">
+
+            <!-- <div class="row mb-5">
 
               <div class="col-lg-6 col-md-6 item-entry mb-4">
                 <a href="/user/product-details" class="product-item md-height bg-gray d-block">
@@ -315,7 +318,7 @@
                 <h2 class="item-title"><a href="/user/product-details">Yellow Jacket</a></h2>
                 <strong class="item-price">$58.00</strong>
               </div>
-            </div>
+            </div> -->
 
               <!-- dynamic loading -->
             <div class="row mb-5">
@@ -324,7 +327,7 @@
               <div class="col-lg-4 col-md-6 item-entry mb-4">
                   <div class="product-item md-height bg-gray d-block">
                       <img src="<%= product.images[0] %>" alt="Image" class="img-fluid">
-                      <p><%= product.images[0] %></p>
+                      <!-- <p><%= product.images[0] %></p> -->
                   </div>
                   <div class="text-center mt-2">
                       <h2 class="item-title">
@@ -363,17 +366,25 @@
             </div>
           </div>
 
-          <div class="col-md-3 order-2 mb-5 mb-md-0">
-            <div class="border p-4 rounded mb-4">
-              <h3 class="mb-3 h6 text-uppercase text-black d-block">Categories</h3>
-              <ul class="list-unstyled mb-0">
-                <li class="mb-1"><a href="#" class="d-flex"><span>Men</span> <span class="text-black ml-auto">(2,220)</span></a></li>
-                <li class="mb-1"><a href="#" class="d-flex"><span>Women</span> <span class="text-black ml-auto">(2,550)</span></a></li>
-                <li class="mb-1"><a href="#" class="d-flex"><span>Children</span> <span class="text-black ml-auto">(2,124)</span></a></li>
-              </ul>
-            </div>
+         
 
-            <div class="border p-4 rounded mb-4">
+            <div class="col-md-3 order-2 mb-5 mb-md-0">
+              <div class="border p-4 rounded mb-4">
+                  <h3 class="mb-3 h6 text-uppercase text-black d-block">Categories</h3>
+                  <ul class="list-unstyled mb-0">
+                      <% categoriesWithCounts.forEach(category => { %>
+                          <li class="mb-1">
+                              <a href="#" class="d-flex">
+                                  <span><%= category.name %></span>
+                                  <span class="text-black ml-auto">(<%= category.count %>)</span>
+                              </a>
+                          </li>
+                      <% }) %>
+                  </ul>
+              </div>
+          </div>
+
+            <!-- <div class="border p-4 rounded mb-4">
               <div class="mb-4">
                 <h3 class="mb-3 h6 text-uppercase text-black d-block">Filter by Price</h3>
                 <div id="slider-range" class="border-primary"></div>
@@ -409,14 +420,14 @@
                 </a>
               </div>
 
-            </div>
+            </div> -->
           </div>
         </div>
 
       </div>
     </div>
     
-    <div class="site-section">
+    <!-- <div class="site-section">
       <div class="container">
         <div class="title-section mb-5">
           <h2 class="text-uppercase"><span class="d-block">Discover</span> The Collections</h2>
@@ -441,7 +452,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     
     <footer class="site-footer custom-border-top">
       <div class="container">
@@ -528,6 +539,14 @@
   <script src="/user/js/aos.js"></script>
 
   <script src="/user/js/main.js"></script>
+
+  <script>
+    function sortProducts(sortBy) {
+      const urlParams = new URLSearchParams(window.location.search); 
+      urlParams.set('sort', sortBy);
+      window.location.search = urlParams.toString();
+    }
+    </script>
     
   </body>
 </html>
