@@ -200,21 +200,26 @@ exports.postEditProduct = async (req, res) => {
           images=[]  //no files uploaded
         }
         console.log("images:",images);
-        const {name,description,price,quantity,sizes,colour,category}=req.body
+        const {name,description,price,quantities,sizes,colour,category}=req.body
 
-        if (!name || !description || !price || !colour || !quantity || !category || !sizes) {
+
+        if (!name || !description || !price || !colour || !quantities || !category || !sizes) {
             req.flash('error', "All fields shall be filled properly");
             return res.redirect(`/admin/edit-product/${productId}`);
         }
 
+        const sizeQuantityArray = sizes.map(size => ({
+            size,
+            quantity: quantities[size] || 0 // Use the corresponding quantity for each size
+        }));
         
       const updatedProduct = {
         name,
         description,
         price,
         colour,
-        quantity,
-        size: Array.isArray(sizes) ? sizes : [sizes],// Ensure size is an array
+        // size: Array.isArray(sizes) ? sizes : [sizes],// Ensure size is an array
+        sizes: sizeQuantityArray,
         category,
         images
       };

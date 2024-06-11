@@ -183,7 +183,7 @@
                 
                     <div class="row mt-3">
                         <div class="col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-10 offset-sm-1 col-12">
-                            <form action="/admin/add-category" method="POST">
+                            <form action="/admin/add-category" method="POST"  id="categoryForm">
                                 <!-- Category Name -->
                                 <div class="form-group">
                                     <label for="name">Category Name:</label>
@@ -194,12 +194,6 @@
                                 <div class="form-group">
                                     <label for="description">Category Description:</label>
                                     <textarea name="description" id="description" class="form-control" rows="6" required></textarea>
-                                </div>
-        
-                                <!-- Category Status (Blocked/Unblocked) -->
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="isBlocked" name="isBlocked">
-                                    <label class="form-check-label" for="isBlocked">Blocked</label>
                                 </div>
         
                                 <div class="text-end">
@@ -250,7 +244,29 @@
     <script src="/admin/js/main.js" type="text/javascript"></script>
    
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('categoryForm');
+        const nameInput = document.getElementById('name');
+        const descriptionInput = document.getElementById('description');
 
+        form.addEventListener('submit', function(event) {
+            const spacesRegex = /^\s*$/;
+
+            if (spacesRegex.test(nameInput.value)) {
+                alert('Category Name cannot be empty or just spaces.');
+                event.preventDefault(); // Prevent form submission
+                return;
+            }
+
+            if (spacesRegex.test(descriptionInput.value)) {
+                alert('Category Description cannot be empty or just spaces.');
+                event.preventDefault(); // Prevent form submission
+                return;
+            }
+        });
+    });
+</script>
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-products-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:12 GMT -->
 </html>

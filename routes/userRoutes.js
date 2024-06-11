@@ -10,9 +10,9 @@ router.get("/shop",userControllers.getShopPage)
 
 router.get("/product-details",userControllers.getProductDetailsPage)
 
-router.post("/add-cart",userControllers.postAddToCart)
+router.post("/add-cart",protectRoute.isBlocked,userControllers.postAddToCart)
 
-router.get("/cart",userControllers.getCartPage)
+router.get("/cart",protectRoute.isBlocked,userControllers.getCartPage)
 
 router.get("/cart/remove",userControllers.removeCartItems)
 
@@ -22,7 +22,7 @@ router.get("/proceed-checkout",userControllers.getProceedToCheckout)
 
 router.post("/orders/status",userControllers.postOrderStatus)
 
-router.get("/user-profile",protectRoute.ifLogged,userControllers.getUserProfile)
+router.get("/user-profile",protectRoute.isBlocked,userControllers.getUserProfile)
 
 router.put("/user-profile",userControllers.editUserProfile)
 
@@ -46,7 +46,7 @@ router.get("/register",userControllers.getRegisterPage)
 
 router.post('/register',userControllers.postRegisterPage)
 
-router.get("/otp",protectRoute.ifLogged,userControllers.getOtp)  //protectRoute.ifLogged,
+router.get("/otp",protectRoute.isOtp,userControllers.getOtp)  
 
 router.post("/otp",userControllers.postOtp)
 
