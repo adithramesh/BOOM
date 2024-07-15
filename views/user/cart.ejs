@@ -1,125 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <title>BOOM &mdash; Apparel Shopping</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>BOOM &mdash; Apparel Shopping</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700" />
+  <link rel="stylesheet" href="fonts/icomoon/style.css" />
+  <link rel="stylesheet" href="/user/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/user/css/magnific-popup.css" />
+  <link rel="stylesheet" href="/user/css/jquery-ui.css" />
+  <link rel="stylesheet" href="/user/css/owl.carousel.min.css" />
+  <link rel="stylesheet" href="/user/css/owl.theme.default.min.css" />
+  <link rel="stylesheet" href="/user/css/aos.css" />
+  <link rel="stylesheet" href="/user/css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+  <style>
+    .search-wrap {
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
-    <link rel="stylesheet" href="fonts/icomoon/style.css">
+    .search-wrap .container {
+      display: flex;
+      align-items: center;
+    }
 
-    <link rel="stylesheet" href="/user/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/user/css/magnific-popup.css">
-    <link rel="stylesheet" href="/user/css/jquery-ui.css">
-    <link rel="stylesheet" href="/user/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="/user/css/owl.theme.default.min.css">
+    .search-form {
+      display: flex;
+      width: 100%;
+    }
 
-    <link rel="stylesheet" href="/user/css/aos.css">
+    .search-input {
+      flex: 1;
+      padding: 10px 15px;
+      border: 2px solid #ddd;
+      border-radius: 4px 0 0 4px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
 
-    <link rel="stylesheet" href="/user/css/style.css">
+    .search-input:focus {
+      border-color: #d9534f;
+    }
+
+    .search-button {
+      padding: 10px 20px;
+      background-color: #d9534f;
+      color: #fff;
+      border: none;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .search-button:hover {
+      background-color: #d9534f;
+    }
+
+    .search-close {
+      margin-right: -40px;
+      cursor: pointer;
+    }
+  </style>
 </head>
+
 <body>
-<div class="site-wrap">
+  <div class="site-wrap">
     <div class="site-navbar bg-white py-2">
-        <div class="search-wrap">
-            <div class="container">
-                <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
-                <form action="#" method="post">
-                    <input type="text" class="form-control" placeholder="Search keyword and hit enter...">
-                </form>  
-            </div>
-        </div>
+
+      <div class="search-wrap">
         <div class="container">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="logo">
-                    <div class="site-logo">
-                        <a href="/user/index" class="js-logo-clone">BOOM</a> <!-- Changed ShopMax to BOOM -->
-                    </div>
-                </div>
-                <div class="main-nav d-none d-lg-block">
-                    <nav class="site-navigation text-right text-md-center" role="navigation">
-                        <ul class="site-menu js-clone-nav d-none d-lg-block">
-                            <li class="has-children">
-                                <a href="/user/index">Home</a>
-                                <ul class="dropdown">
-                                    <li><a href="#">Menu One</a></li>
-                                    <li><a href="#">Menu Two</a></li>
-                                    <li><a href="#">Menu Three</a></li>
-                                    <li class="has-children">
-                                        <a href="#">Sub Menu</a>
-                                        <ul class="dropdown">
-                                            <li><a href="#">Menu One</a></li>
-                                            <li><a href="#">Menu Two</a></li>
-                                            <li><a href="#">Menu Three</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="active"><a href="/user/shop">Shop</a></li>
-                            <li><a href="#">Catalogue</a></li>
-                            <li><a href="#">New Arrivals</a></li>
-                            <li><a href="/user/contact">Contact</a></li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="icons">
-                    <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
-                    <a href="/user/user-profile" class="icons-btn d-inline-block"><span class="icon-user"></span></a>
-                    <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
-                    <a href="/user/cart" class="icons-btn d-inline-block bag">
-                        <span class="icon-shopping-bag"></span>
-                        <span class="number"><%= cart ? cart.items.length : 0 %></span>
-                    </a>
-                    <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span class="icon-menu"></span></a>
-                </div>
-            </div>
+          <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
+          <form action="/user/shop" method="GET" class="search-form">
+            <input type="text" name="q" class="search-input" placeholder="Search products..."
+              value="<%= typeof q !== 'undefined' ? q : '' %>">
+            <button type="submit" class="search-button">Search</button>
+          </form>
         </div>
+      </div>
+
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="logo">
+            <div class="site-logo">
+              <a href="/user/index" class="js-logo-clone">BOOM</a>
+              <!-- Changed ShopMax to BOOM -->
+            </div>
+          </div>
+          <div class="main-nav d-none d-lg-block">
+            <nav class="site-navigation text-right text-md-center" role="navigation">
+              <ul class="site-menu js-clone-nav d-none d-lg-block">
+                <li class="active">
+                  <a href="/user/index">Home</a>
+                </li>
+                <li class="active"><a href="/user/shop">Shop</a></li>
+               
+              </ul>
+            </nav>
+          </div>
+          <div class="icons">
+            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
+            <a href="/user/user-profile" class="icons-btn d-inline-block"><span class="icon-user"></span></a>
+            <a href="/user/wishlist" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
+            <a href="/user/cart" class="icons-btn d-inline-block bag">
+              <span class="icon-shopping-bag"></span>
+              <span class="number">
+                <%= cart ? cart.items.length : 0 %>
+              </span>
+            </a>
+            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
+                class="icon-menu"></span></a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Breadcrumbs -->
     <div class="bg-light py-3">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 mb-0"><a href="/user/index">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Cart</strong></div>
-            </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0">
+            <a href="/user/index">Home</a> <span class="mx-2 mb-0">/</span>
+            <strong class="text-black">Cart</strong>
+          </div>
         </div>
+      </div>
     </div>
 
     <div class="site-section">
-        <div class="container">
-            <div class="row mb-5">
-                <form class="col-md-12" method="post" action="/user/cart">
-                    <div class="site-blocks-table">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th class="product-thumbnail">Image</th>
-                                    <th class="product-name">Product</th>
-                                    <th class="product-size">Size</th>
-                                    <th class="product-colour">Colour</th>
-                                    <th class="product-price">Price</th>
-                                    <th class="product-quantity">Quantity</th>
-                                    <th class="product-total">Total</th>
-                                    <th class="product-remove">Remove</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (cart && cart.items.length > 0) { %>
-                                    <% cart.items.forEach((item,index) => { %>
-                                        <tr>
-                                            <td class="product-thumbnail">
-                                                <img src="<%= item.images[0] %>" alt="Image" class="img-fluid">
-                                            </td>
-                                            <td class="product-name">
-                                                <h2 class="h5 text-black"><%= item.name %></h2>
-                                                <p><%= item.description %></p>
-                                            </td>
-                                            <td><%= item.size %></td>
-                                            <td><%= item.colour %></td>
-                                            <td>₹<%= item.price.toFixed(2) %></td>
-                                            <!-- <td><%= item.quantity %></td> -->
-                                            <td>
-                                                <!-- <div class="input-group mb-3" style="max-width: 120px;">
+      <div class="container">
+        <div class="row mb-5">
+          <form class="col-md-12" method="post" action="/user/cart">
+            <div class="site-blocks-table">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th class="product-thumbnail">Image</th>
+                    <th class="product-name">Product</th>
+                    <th class="product-size">Size</th>
+                    <th class="product-colour">Colour</th>
+                    <th class="product-price">Price</th>
+                    <th class="product-quantity">Quantity</th>
+                    <th class="product-total">Total</th>
+                    <th class="product-remove">Remove</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (cart && cart.items.length> 0) { %> <% cart.items.forEach((item,index)=> { %>
+                      <tr>
+                        <td class="product-thumbnail">
+                          <img src="<%= item.images[0] %>" alt="Image" class="img-fluid" />
+                        </td>
+                        <td class="product-name">
+                          <h2 class="h5 text-black">
+                            <%= item.name %>
+                          </h2>
+                          <p>
+                            <%= item.description %>
+                          </p>
+                        </td>
+                        <td>
+                          <%= item.size %>
+                        </td>
+                        <td>
+                          <%= item.colour %>
+                        </td>
+                        <td>₹<%= item.price.toFixed(2) %>
+                        </td>
+                        <!-- <td><%= item.quantity %></td> -->
+
+                        <!-- <div class="input-group mb-3" style="max-width: 120px;">
                                                     <div class="input-group-prepend">
                                                         <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
                                                     </div>
@@ -128,182 +183,292 @@
                                                         <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
                                                     </div>
                                                 </div> -->
-                                                <div class="input-group mb-3" style="max-width: 120px;">
-                                                    <div class="input-group-prepend">
-                                                      <button onclick="updateQuantity('<%= cart._id %>', '<%= item._id %>', '<%= item.size %>', '<%= item.price %>', '<%= index %>', -1)" class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-                                                    </div>
-                                                    <input id="quantity<%= index %>" type="text" class="form-control text-center" value="<%= item.quantity %>" aria-label="Quantity">
-                                                    <div class="input-group-append">
-                                                      <button onclick="updateQuantity('<%= cart._id %>', '<%= item._id %>', '<%= item.size %>', '<%= item.price %>', '<%= index %>', 1)" class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-                                                    </div>
-                                                  </div>
-                                            </td>
-                                            <td>
-                                                <h6 id="itemTotal<%= index %>">₹<%= item.amount %></h6>
-                                              </td>
-                                           
-                                            <!-- <td><a href="/user/cart/remove/?userId=<%= cart.userId %>&size=<%= encodeURIComponent(item.size) %>&name=<%=item.name%>" class="btn btn-primary height-auto btn-sm">X</a></td> -->
-                                            <td><a href="#" onclick="confirmRemoval('/user/cart/remove/?userId=<%= cart.userId %>&size=<%= encodeURIComponent(item.size) %>&name=<%= item.name %>')" class="btn btn-primary btn-sm">X</a></td>   
-                                        </tr>
-                                    <% }); %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="8" class="text-center">Your cart is empty</td>
-                                    </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
-                </form>
-            </div>
+                        <td>
+                          <div class="input-group mb-3" style="max-width: 120px">
+                            <div class="input-group-prepend">
+                              <button
+                                onclick="updateQuantity('<%= cart._id %>', '<%= item._id %>', '<%= item.size %>', '<%= item.price %>', '<%= index %>', -1)"
+                                class="btn btn-outline-primary js-btn-minus" type="button">
+                                &minus;
+                              </button>
+                            </div>
+                            <input id="quantity<%= index %>" type="text" class="form-control text-center"
+                              value="<%= item.quantity %>" aria-label="Quantity" />
+                            <div class="input-group-append">
+                              <button
+                                onclick="updateQuantity('<%= cart._id %>', '<%= item._id %>', '<%= item.size %>', '<%= item.price %>', '<%= index %>', 1)"
+                                class="btn btn-outline-primary js-btn-plus" type="button">
+                                &plus;
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <h6 id="itemTotal<%= index %>">₹<%= item.amount %>
+                          </h6>
+                        </td>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="row mb-5">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <button class="btn btn-primary btn-sm btn-block">Update Cart</button>
-                        </div>
-                        <div class="col-md-6">
-                            <a href="/user/shop" class="btn btn-outline-primary btn-sm btn-block">Continue Shopping</a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label class="text-black h4" for="coupon">Coupon</label>
-                            <p>Enter your coupon code if you have one.</p>
-                        </div>
-                        <div class="col-md-8 mb-3 mb-md-0">
-                            <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-primary btn-sm px-4">Apply Coupon</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 pl-5">
-                    <div class="row justify-content-end">
-                        <div class="col-md-7">
-                            <div class="row">
-                                <div class="col-md-12 text-right border-bottom mb-5">
-                                    <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
-                                </div>
-                            </div>
-                            <!-- <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <span class="text-black">Subtotal</span>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <strong class="text-black">₹<%= cart ? cart.totalPrice.toFixed(2) : '0.00' %></strong>
-                                </div>
-                            </div>
-                            <div class="row mb-5">
-                                <div class="col-md-6">
-                                    <span class="text-black">Total</span>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <strong class="text-black">₹<%= cart ? cart.totalPrice.toFixed(2) : '0.00' %></strong>
-                                </div>
-                            </div> -->
-                            <div class="row mb-5">
-                                <div class="col-md-6">
-                                  <span class="text-black">Total</span>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                  <strong id="cartTotal" class="text-black">₹<%= cart ? cart.totalPrice.toFixed(2) : '0.00' %></strong>
-                                </div>
-                              </div>
+                        <td><a
+                            href="/user/cart/remove/?userId=<%= cart.userId %>&size=<%= encodeURIComponent(item.size) %>&name=<%=item.name%>"
+                            class="btn btn-primary height-auto btn-sm">X</a></td>
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <a href="/user/proceed-checkout" class="btn btn-primary btn-lg btn-block">Proceed To Checkout</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+                      </tr>
+                      <% }); %>
+                        <% } else { %>
+                          <tr>
+                            <td colspan="8" class="text-center">
+                              Your cart is empty
+                            </td>
+                          </tr>
+                          <% } %>
+                </tbody>
+              </table>
             </div>
+          </form>
         </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="row mb-5">
+              <div class="col-md-6 mb-3 mb-md-0">
+                <button class="btn btn-primary btn-sm btn-block">Update Cart</button>
+              </div>
+              <div class="col-md-6">
+                <a href="/user/shop" class="btn btn-outline-primary btn-sm btn-block">Continue Shopping</a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <label class="text-black h4" for="coupon">Coupon</label>
+                <p>Enter your coupon code if you have one.</p>
+                <% if (eligibleCoupons.length > 0) { %>
+                  <p>You are eligible for the following coupons:</p>
+                  <ul>
+                    <% eligibleCoupons.forEach(coupon => { %>
+                      <li><strong><%= coupon.couponCode %></strong> - <%= coupon.description %></li>
+                    <% }); %>
+                  </ul>
+                <% } else { %>
+                  <p>No coupons available.</p>
+                <% } %>
+              </div>
+              <div class="col-md-8 mb-3 mb-md-0">
+                <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code" />
+              </div>
+              <div class="col-md-4">
+                <button class="btn btn-primary  btn-sm w-100 mb-2" id="applyCoupon">Apply Coupon</button>
+                <!-- <% if (cart.discount > 0) { %> -->
+                  <button class="btn btn-secondary btn-sm w-100 mb-2" id="removeCoupon">Remove Coupon</button>
+                <!-- <% } %> -->
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 pl-5">
+            <div class="row justify-content-end">
+              <div class="col-md-7">
+                <div class="row">
+                  <div class="col-md-12 text-right border-bottom mb-5">
+                    <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+                  </div>
+                </div>
+        
+                <div class="row mb-5">
+                  <div class="col-md-6">
+                    <span class="text-black">Subtotal</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong id="cartSubTotal" class="text-black">₹<%= cart && cart.subTotal ? cart.subTotal.toFixed(2) : '0.00' %></strong>
+                  </div>
+                </div>
+        
+                <div class="row mb-5">
+                  <div class="col-md-6">
+                    <span class="text-black">Discount</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong id="cartDiscount" class="text-black">₹<%= cart ? cart.discount.toFixed(2) : '0.00' %></strong>
+                  </div>
+                </div>
+        
+                <div class="row mb-5">
+                  <div class="col-md-6">
+                    <span class="text-black">Total</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <strong id="cartTotal" class="text-black">₹<%= cart ? cart.totalPrice.toFixed(2) : '0.00' %></strong>
+                  </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-md-12">
+                      <button id="proceedCheckoutBtn" class="btn btn-primary btn-lg btn-block">Proceed To Checkout</button>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+        
+      </div>
     </div>
 
     <!-- Optional Footer -->
     <!-- Include your footer template here -->
+  </div>
 
-</div>
+  <script src="/user/js/jquery-3.3.1.min.js"></script>
+  <script src="/user/js/jquery-ui.js"></script>
+  <script src="/user/js/popper.min.js"></script>
+  <script src="/user/js/bootstrap.min.js"></script>
+  <script src="/user/js/owl.carousel.min.js"></script>
+  <script src="/user/js/jquery.magnific-popup.min.js"></script>
+  <script src="/user/js/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="/user/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
 
-<script src="/user/js/jquery-3.3.1.min.js"></script>
-<script src="/user/js/jquery-ui.js"></script>
-<script src="/user/js/popper.min.js"></script>
-<script src="/user/js/bootstrap.min.js"></script>
-<script src="/user/js/owl.carousel.min.js"></script>
-<script src="/user/js/jquery.magnific-popup.min.js"></script>
-<script src="/user/js/aos.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-<script src="/user/js/main.js"></script>
-
-<script>
-    function confirmRemoval(url) {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to remove this item from the cart?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, remove it!",
-        cancelButtonText: "Cancel"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = url;
-        }
-      });
-    }
-  
-    async function updateQuantity(cartId, productId, size, price, index, count) {
+  <script>
+   
+    async function updateQuantity(
+      cartId,
+      productId,
+      size,
+      price,
+      index,
+      count
+    ) {
       try {
         let quantityInput = document.getElementById(`quantity${index}`);
         let currentQuantity = parseInt(quantityInput.value);
         let newQuantity = currentQuantity + count;
-  
+
+        // if (newQuantity < 1) {
+        //   Swal.fire({
+        //     text: "Quantity cannot be less than 1",
+        //     icon: "error",
+        //     confirmButtonText: "OK",
+        //   });
+        //   return;
+        // }
+
         if (newQuantity < 1) {
-          Swal.fire({
-            text: 'Quantity cannot be less than 1',
-            icon: 'error',
-            confirmButtonText: 'OK'
-          });
-          return;
-        }
-  
-        const response = await fetch('/user/cart/update-quantity', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            cartId: cartId,
-            productId: productId,
-            size: size,
-            newQuantity: newQuantity
-          })
-        });
-  
+      Swal.fire({
+        text: "Quantity cannot be less than 1",
+        icon: "error",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.reload(); // Reload the page after the alert is dismissed
+      });
+      return;
+    }
+
+    const response = await fetch("/user/cart/update-quantity", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cartId: cartId,
+        productId: productId,
+        size: size,
+        newQuantity: newQuantity,
+      }),
+    });
+
         const data = await response.json();
-  
+
         if (data.success) {
           quantityInput.value = data.newQuantity;
-          document.getElementById(`itemTotal${index}`).innerText = `₹${data.itemAmount.toFixed(2)}`;
-          document.getElementById(`cartTotal`).innerText = `₹${data.cartTotal.toFixed(2)}`;
-        } else {
+          document.getElementById(
+            `itemTotal${index}`
+          ).innerText = `₹${data.itemAmount.toFixed(2)}`;
+          document.getElementById(
+            `cartSubTotal`
+          ).innerText = `₹${data.cartSubTotal.toFixed(2)}`;
+          document.getElementById(
+          `cartTotal`
+          ).innerText = `₹${data.cartTotal.toFixed(2)}`;
+        } 
+        else {
           Swal.fire({
             text: data.error,
-            icon: 'error',
-            confirmButtonText: 'OK'
-          });
+            icon: "error",
+            confirmButtonText: "OK",
+          }).then(() => {
+        if (data.error.includes("exceed")) {
+          window.location.reload(); // Reload the page if quantity exceeds limit
+        }
+      });;
         }
       } catch (error) {
-        console.error('Error updating quantity:', error);
+        console.error("Error updating quantity:", error);
       }
     }
+
+    // Coupon  
+    document.getElementById('applyCoupon').addEventListener('click', async () => {
+    const couponCode = document.getElementById('coupon').value;
+    if (!couponCode) return;
+
+    try {
+      const response = await fetch('/user/apply-coupon', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ couponCode }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        document.getElementById('cartDiscount').innerText = `₹${data.discount.toFixed(2)}`;
+        document.getElementById('cartTotal').innerText = `₹${data.totalPrice.toFixed(2)}`;
+        window.location.reload();
+      } else {
+        alert(data.error);
+      }
+    } catch (error) {
+      console.error('Error applying coupon:', error);
+    }
+  });
+
+  document.getElementById('removeCoupon').addEventListener('click', async () => {
+    try {
+      const response = await fetch('/user/remove-coupon', {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        window.location.reload(); // Refresh the page to reset the cart
+      } else {
+        alert('Failed to remove coupon');
+      }
+    } catch (error) {
+      console.error('Error removing coupon:', error);
+    }
+  });
   </script>
 
+<script>
+  document.getElementById('proceedCheckoutBtn').addEventListener('click', function(event) {
+    const totalPrice = parseFloat('<%= cart ? cart.totalPrice.toFixed(2) : 0.00 %>');
+    
+    if (totalPrice === 0) {
+      event.preventDefault();
+      Swal.fire({
+        icon: 'error',
+        title: 'Cart is empty',
+        text: 'Please add items to your cart before proceeding to checkout.'
+      });
+    } else {
+      window.location.href = '/user/proceed-checkout';
+    }
+  });
+</script>
+
 </body>
+
 </html>

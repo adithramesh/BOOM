@@ -3,8 +3,13 @@ const User=require('../models/users');
 const Category=require('../models/categories')
 const Address=require('../models/address')
 const Order=require('../models/order')
+const Coupon = require('../models/coupon');
 const multer=require('multer')
 const bcrypt=require('bcrypt')
+const mongoose = require('mongoose');
+const puppeteer = require('puppeteer');
+const easyinvoice = require('easyinvoice');
+const Excel = require('excel4node');
 
 exports.getLoginPage=((req,res)=>{
     try{
@@ -28,8 +33,6 @@ exports.postLoginPage=(async(req,res)=>{
     try{
         console.log("inside post admin login page");
         const {email,password}= req.body
-        console.log("email:",email);
-        console.log("password:", password);
         const admin=await User.findOne({email})
         console.log("admin:",admin);
         if(admin.isAdmin===false){
@@ -60,20 +63,415 @@ exports.postLoginPage=(async(req,res)=>{
     }
 })
 
-exports.getDashboardPage=((req,res)=>{
-    try{
-        if(req.session.isAdAuth){
-            console.log("inside admin dashboard page");
-            return res.render("admin/dashboard")
-        }else{
-            res.redirect('/admin/login')
+
+// exports.getDashboardPage = async (req, res) => {
+//     try {
+//         if (req.session.isAdAuth) {
+//             // Fetch total number of products
+//             const totalProducts = await Product.countDocuments({});
+//             const totalOrders = await Order.countDocuments({})
+//             const totalCategories = await Category.countDocuments({})
+//             // Calculate total revenue from orders
+//             const orders = await Order.find({});
+//             const totalRevenue = orders.reduce((acc, order) => acc + order.amount, 0);
+
+           
+//             // Get top-selling products
+//             const topSellingProducts = await Order.aggregate([
+//                 { $match: { orderStatus: 'delivered' } },
+//                 { $unwind: "$items" },
+//                 {
+//                     $group: {
+//                         _id: "$items.product",
+//                         totalQuantity: { $sum: "$items.quantity" },
+//                     }
+//                 },
+//                 { $sort: { totalQuantity: -1 } },
+//                 { $limit: 5 },
+//                 {
+//                     $lookup: {
+//                         from: "products",
+//                         localField: "_id",
+//                         foreignField: "_id",
+//                         as: "product"
+//                     }
+//                 },
+//                 { $unwind: "$product" }
+//             ]);
+
+//             // Get top-selling categories
+//             const topSellingCategories = await Order.aggregate([
+//                 { $match: { orderStatus: 'delivered' } },
+//                 { $unwind: "$items" },
+//                 {
+//                     $lookup: {
+//                         from: "products",
+//                         localField: "items.product",
+//                         foreignField: "_id",
+//                         as: "product"
+//                     }
+//                 },
+//                 { $unwind: "$product" },
+//                 {
+//                     $group: {
+//                         _id: "$product.category",
+//                         totalQuantity: { $sum: "$items.quantity" },
+//                     }
+//                 },
+//                 { $sort: { totalQuantity: -1 } },
+//                 { $limit: 5 },
+//                 {
+//                     $lookup: {
+//                         from: "categories",
+//                         localField: "_id",
+//                         foreignField: "_id",
+//                         as: "category"
+//                     }
+//                 },
+//                 { $unwind: "$category" }
+//             ]);
+
+//             console.log("top selling products:",topSellingProducts);
+//             console.log("top selling categories:", topSellingCategories);
+
+//             return res.render('admin/dashboard', {
+//                 totalProducts,
+//                 totalRevenue,
+//                 totalOrders,
+//                 totalCategories,
+//                 topSellingProducts,
+//                 topSellingCategories
+//             });
+//         } else {
+//             res.redirect('/admin/login');
+//         }
+//     } catch (err) {
+//         console.error('Getting error in dashboard', err);
+//         res.redirect('/admin/login');
+//     }
+// };
+
+exports.getDashboardPage = async (req, res) => {
+    try {
+        if (req.session.isAdAuth) {
+            const totalProducts = await Product.countDocuments({});
+            const totalOrders = await Order.countDocuments({});
+            const totalCategories = await Category.countDocuments({});
+
+            const orders = await Order.find({ orderStatus: 'delivered' });
+            const totalRevenue = orders.reduce((acc, order) => acc + order.amount, 0);
+
+           
+            const pipelineTopSellingProducts = [
+                // Unwind items array to denormalize
+                {
+                    $unwind: '$items',
+                },
+                // Group by product and sum quantities
+                {
+                    $group: {
+                        _id: '$items.product', // Group by product _id
+                        totalSold: { $sum: '$items.quantity' }, // Sum of quantities for each product
+                    },
+                },
+                // Lookup to join with Products collection
+                {
+                    $lookup: {
+                        from: 'products', // Assuming your collection name is 'products'
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'productDetails',
+                    },
+                },
+                // Unwind to destructure the array from lookup
+                {
+                    $unwind: '$productDetails',
+                },
+                // Project to shape the output
+                {
+                    $project: {
+                        _id: 1,
+                        totalSold: 1,
+                        productName: '$productDetails.name',
+                        productCategory: '$productDetails.category', // Assuming category is already populated
+                        productImage: '$productDetails.images',
+                        stockLeft: '$productDetails.sizes.quantity', // Adjust as per your schema
+                    },
+                },
+                // Sort by totalSold descending
+                {
+                    $sort: { totalSold: -1 },
+                },
+                // Limit to top 10 products
+                {
+                    $limit: 10,
+                },
+            ];
+            
+            const topSellingProducts = await Order.aggregate(pipelineTopSellingProducts);
+            console.log('Top Selling Products:', topSellingProducts);
+
+            const pipelineTopSellingCategories = [
+                // Unwind items array to denormalize
+                {
+                    $unwind: '$items',
+                },
+                // Lookup to join with Products collection
+                {
+                    $lookup: {
+                        from: 'products', // Assuming your collection name is 'products'
+                        localField: 'items.product',
+                        foreignField: '_id',
+                        as: 'productDetails',
+                    },
+                },
+                // Unwind to destructure the array from lookup
+                {
+                    $unwind: '$productDetails',
+                },
+                // Lookup to join with Categories collection
+                {
+                    $lookup: {
+                        from: 'categories', // Assuming your collection name is 'categories'
+                        localField: 'productDetails.category',
+                        foreignField: '_id',
+                        as: 'categoryDetails',
+                    },
+                },
+                // Unwind to destructure the array from lookup
+                {
+                    $unwind: '$categoryDetails',
+                },
+                // Group by category and sum quantities
+                {
+                    $group: {
+                        _id: '$categoryDetails.name',
+                        totalSold: { $sum: '$items.quantity' },
+                        numProducts: { $addToSet: '$productDetails._id' }, // Get unique products
+                    },
+                },
+                // Project to shape the output
+                {
+                    $project: {
+                        _id: 1,
+                        totalSold: 1,
+                        numProducts: { $size: '$numProducts' }, // Count unique products
+                    },
+                },
+                // Sort by totalSold descending
+                {
+                    $sort: { totalSold: -1 },
+                },
+                // Limit to top 10 categories
+                {
+                    $limit: 10,
+                },
+            ];
+            
+            const topSellingCategories = await Order.aggregate(pipelineTopSellingCategories);
+            console.log('Top Selling Categories:', topSellingCategories);
+            
+            return res.render('admin/dashboard', {
+                totalProducts,
+                totalRevenue,
+                totalOrders,
+                totalCategories,
+                topSellingProducts,
+                topSellingCategories
+             
+            });
+        } else {
+            res.redirect('/admin/login');
         }
-    }catch(err){
-        console.error('Getting error in dashboard',err);
-        res.redirect('/admin/login')
+    } catch (err) {
+        console.error('Getting error in dashboard', err);
+        res.redirect('/admin/login');
     }
-    
-})
+};
+
+
+// Function to generate sales report in PDF
+exports.postSalesReport = async (req, res) => {
+    const { startDate, endDate } = req.body;
+
+    try {
+        const orders = await Order.find({
+            date: { $gte: new Date(startDate), $lte: new Date(endDate) }
+        });
+
+        // Prepare sales report data
+        const salesReportData = {
+            totalOrders: orders.length,
+            totalRevenue: orders.reduce((acc, order) => acc + order.amount, 0),
+            totalDiscount: orders.reduce((acc, order) => acc + (order.discount || 0), 0),
+            orders: orders.map(order => ({
+                orderId: order.orderId,
+                date: order.date.toISOString().split('T')[0],
+                amount: order.amount,
+                discount: order.discount || 0
+            }))
+        };
+
+        // Prepare PDF invoice data
+        const invoiceData = {
+            documentTitle: 'Sales Report',
+            currency: 'INR',
+            taxNotation: 'GST',
+            marginTop: 25,
+            marginRight: 25,
+            marginLeft: 25,
+            marginBottom: 25,
+            logo: 'https://public.easyinvoice.cloud/img/logo_en_original.png',
+            sender: {
+                company: 'BOOM Apparel Shopping',
+                address: 'BOOM Pvt Ltd',
+                zip: '560 007',
+                city: 'Bangalore',
+                country: 'India'
+            },
+            invoiceNumber: '2021.0001',
+            invoiceDate: new Date().toISOString().split('T')[0],
+            products: salesReportData.orders.map((order, index) => ({
+                slNo: index + 1,
+                description: `Order ID: ${order.orderId}, Date: ${order.date}`,
+                tax: 0,
+                discount: order.discount || 0,
+                price: order.amount
+            })),
+            bottomNotice: 'This is a generated sales report.'
+        };
+
+        // Generate PDF using easyinvoice
+        const result = await easyinvoice.createInvoice(invoiceData);
+        const pdfBuffer = Buffer.from(result.pdf, 'base64');
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
+        res.send(pdfBuffer);
+    } catch (error) {
+        console.error('Error generating sales report', error);
+        res.status(500).send('Error generating sales report');
+    }
+};
+
+const excel4node = require('excel4node');
+
+exports.getExcelSalesReport = async (req, res) => {
+    const { startDate, endDate } = req.query;
+    console.log("startDate:",startDate);
+    console.log("endDate:",endDate);
+    try {
+        const orders = await Order.find({
+            date: { $gte: new Date(startDate), $lte: new Date(endDate) }
+        });
+
+        // Prepare sales report data
+        const salesReportData = {
+            totalOrders: orders.length,
+            totalRevenue: orders.reduce((acc, order) => acc + order.amount, 0),
+            totalDiscount: orders.reduce((acc, order) => acc + (order.discount || 0), 0),
+            orders: orders.map(order => ({
+                orderId: order.orderId,
+                date: order.date.toISOString().split('T')[0],
+                amount: order.amount,
+                discount: order.discount || 0
+            }))
+        };
+
+        // Create a new instance of a Workbook class
+        const wb = new excel4node.Workbook();
+
+        // Add a Worksheet to the workbook
+        const ws = wb.addWorksheet('Sales Report');
+
+        // Create a reusable style
+        const style = wb.createStyle({
+            font: {
+                color: '#000000',
+                size: 12,
+            },
+            numberFormat: '₹#,##0.00; (₹#,##0.00); -',
+        });
+
+        // Set headers
+        ws.cell(1, 1).string('Order ID').style(style);
+        ws.cell(1, 2).string('Date').style(style);
+        ws.cell(1, 3).string('Amount').style(style);
+        ws.cell(1, 4).string('Discount').style(style);
+
+        // Fill data
+        salesReportData.orders.forEach((order, index) => {
+            ws.cell(index + 2, 1).string(order.orderId).style(style);
+            ws.cell(index + 2, 2).string(order.date).style(style);
+            ws.cell(index + 2, 3).number(order.amount).style(style); // Ensure this is a number
+            ws.cell(index + 2, 4).number(order.discount).style(style); // Ensure this is a number
+        });
+
+        // Write to response
+        wb.write('SalesReport.xlsx', res);
+    } catch (error) {
+        console.error('Error generating Excel sales report', error);
+        res.status(500).send('Error generating Excel sales report');
+    }
+};
+
+
+
+exports.getCharts = async(req,res)=>{
+    console.log("inside getCharts");
+    const { timeframe } = req.params;
+    console.log("timeframe:",timeframe);
+    let groupKey, dateFormat;
+
+    if (timeframe === 'months') {
+        groupKey = { $month: '$date' };
+        dateFormat = '%m';
+    } else if (timeframe === 'years') {
+        groupKey = { $year: '$date' };
+        dateFormat = '%Y';
+    } else if (timeframe === 'days') {
+        groupKey = { $dateToString: { format: '%Y-%m-%d', date: '$date' } };
+        dateFormat = '%Y-%m-%d';
+    }
+
+    try {
+        const result = await Order.aggregate([
+            { $match: { orderStatus: 'delivered' } },
+            {
+                $group: {
+                    _id: groupKey,
+                    count: { $sum: { $size: '$items' } } // Count products per order
+                }
+            }
+        ]);
+
+        console.log("result:",result);
+        // Transform result to format expected by Chart.js (labels and data)
+        const labels = result.map(entry => {
+            // Format date labels if needed (e.g., using Moment.js)
+            return formatDate(entry._id, dateFormat); // Implement formatDate function as needed
+        });
+        const data = result.map(entry => entry.count);
+
+        res.json({ labels, data });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+
+}
+
+function formatDate(date, format) {
+    const d = new Date(date);
+
+    if (format === '%Y') {
+        return d.getFullYear().toString();
+    } else if (format === '%m') {
+        return (d.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based in JavaScript
+    } else if (format === '%Y-%m-%d') {
+        return d.toISOString().split('T')[0];
+    }
+}
 
 exports.getCustomers=async(req,res)=>{
     try{
@@ -106,9 +504,30 @@ exports.postUpdateCustomerStatus=(async(req,res)=>{
 
 exports.getProductPage=(async(req,res)=>{
     try{
-        const products = await Product.find().populate('category').sort({ createdAt: -1 }).exec();
+        // Pagination
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10; // Adjust the limit as needed
+        const skip = (page - 1) * limit; 
+
+        // Get the total number of products that match the filter
+        const totalProducts = await Product.countDocuments();
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        let startIndex=skip+1;
+
+        const products = await Product.find().populate('category').sort({ createdAt: -1 }).limit(limit).skip(skip).exec();
         console.log("inside product page");
-        res.render("admin/products",{products})
+        res.render("admin/products",{products,
+            currentPage: page,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages,
+            startIndex,
+            limit
+        })
     }catch(err){
         console.error('Error in getting product page',err);
     }
@@ -189,6 +608,7 @@ exports.getEditProduct=async(req,res)=>{
 exports.postEditProduct = async (req, res) => {
     try {
         const productId = req.params.id;
+        const existingProduct = await Product.findById(productId)
         console.log("productId:", productId); 
         let images;
         console.log("req.file",req.files);
@@ -197,13 +617,13 @@ exports.postEditProduct = async (req, res) => {
         } else if (req.file){
           images=req.file.filename
         } else{
-          images=[]  //no files uploaded
+          images= existingProduct.images;  //no files uploaded
         }
         console.log("images:",images);
-        const {name,description,price,quantities,sizes,colour,category}=req.body
+        const {name,description,originalPrice,discountPercentage,quantities,sizes,colour,category}=req.body
 
 
-        if (!name || !description || !price || !colour || !quantities || !category || !sizes) {
+        if (!name || !description || !originalPrice || !discountPercentage ||!colour || !quantities || !category || !sizes) {
             req.flash('error', "All fields shall be filled properly");
             return res.redirect(`/admin/edit-product/${productId}`);
         }
@@ -216,7 +636,9 @@ exports.postEditProduct = async (req, res) => {
       const updatedProduct = {
         name,
         description,
-        price,
+        originalPrice,
+        discountPercentage,
+        price:originalPrice*(1-discountPercentage/100),
         colour,
         // size: Array.isArray(sizes) ? sizes : [sizes],// Ensure size is an array
         sizes: sizeQuantityArray,
@@ -225,7 +647,7 @@ exports.postEditProduct = async (req, res) => {
       };
 
       console.log("updated products:",updatedProduct);
-        await Product.findByIdAndUpdate(productId, updatedProduct);
+        await Product.findByIdAndUpdate(productId, updatedProduct,{ new: true });
         req.flash('success','Product editted successfully')
         res.redirect("/admin/products");
     } catch (error) {
@@ -236,9 +658,9 @@ exports.postEditProduct = async (req, res) => {
 
 exports.postAddProducts = async (req, res) => {
     try {
-        const { name, description, price, colour, quantities, category, sizes } = req.body;
+        const { name, description, originalPrice, discountPercentage, colour, quantities, category, sizes } = req.body;
 
-        if (!name || !description || !price || !colour || !quantities || !sizes  || !category) {
+        if (!name || !description || !originalPrice || !discountPercentage || !colour || !quantities || !sizes  || !category) {
             req.flash('error', "All fields shall be filled properly");
             return res.redirect('/admin/add-product');
         }
@@ -259,18 +681,25 @@ exports.postAddProducts = async (req, res) => {
             quantity: quantities[size] || 0 // Use the corresponding quantity for each size
         }));
 
-        const newProduct = {
+        console.log("category:",category);
+        const categoryId = new mongoose.Types.ObjectId(category);
+        console.log("categoryId:",categoryId);
+
+        const newProduct = new Product({
             name,
-            description,
-            price,
+            description,   
+            originalPrice,
+            discountPercentage,
+            price:originalPrice*(1-discountPercentage/100),
             colour,
-            category,
+            category:categoryId,
             images,
             sizes: sizeQuantityArray
-        };
+        });
 
         console.log("new product:", newProduct);
-        await Product.create(newProduct);
+        // await Product.create(newProduct);
+        await newProduct.save();
         res.redirect("/admin/products");
         // res.status(201).json(newProduct);
     } catch (error) {
@@ -279,46 +708,6 @@ exports.postAddProducts = async (req, res) => {
     }
 };
 
-// exports.postAddProducts = async (req, res) => {
-//     try {
-//         const { name, description, price, colour, quantity, category, sizes } = req.body;
-
-//         if (!name || !description || !price || !colour || !quantity || !sizes  || !category) {
-//             req.flash('error', "All fields shall be filled properly");
-//             return res.redirect('/admin/add-product');
-//         }
-
-//         console.log("req.files", req.files);
-
-//         let images;
-//         if (req.files && req.files.length > 0) {
-//             images = req.files.map(file => '/admin/uploads/' + file.filename); // Assuming files are saved with path
-//         } else if (req.file) {
-//             images = ['/admin/uploads/' + req.file.filename];
-//         } else {
-//             images = [];  // No files uploaded
-//         }
-
-//         const newProduct = {
-//             name,
-//             description,
-//             price,
-//             colour,
-//             quantity,
-//             category,
-//             images,
-//             size: Array.isArray(sizes) ? sizes : [sizes] // Ensure size is an array
-//         };
-
-//         console.log("new product:", newProduct);
-//         await Product.create(newProduct);
-//         res.redirect("/admin/products");
-//         // res.status(201).json(newProduct);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
 
   async function countProductsForCategory(categoryId) {
     try {
@@ -333,7 +722,19 @@ exports.postAddProducts = async (req, res) => {
 
 exports.getCategories=async(req,res)=>{
     try{
-        let categories= await Category.find().populate('products').exec()
+        // Pagination
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10; // Adjust the limit as needed
+        const skip = (page - 1) * limit; 
+
+        // Get the total number of products that match the filter
+        const totalCategories = await Category.countDocuments();
+        const totalPages = Math.ceil(totalCategories / limit);
+
+        let startIndex=skip+1;
+
+
+        let categories= await Category.find().populate('products').limit(limit).skip(skip).exec()
         // console.log("categories",categories);
         const countPromises=categories.map(async category=>{
             const productCount= await countProductsForCategory(category._id);
@@ -341,7 +742,16 @@ exports.getCategories=async(req,res)=>{
         })
         const categoriesWithProductCount= await Promise.all(countPromises)
         // console.log("categoryCount:",categoriesWithProductCount);
-        return res.render('admin/categories',{categories, categoriesWithProductCount})
+        return res.render('admin/categories',{categories, categoriesWithProductCount,
+            currentPage: page,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: totalPages,
+            startIndex,
+            limit })
     }catch(err){
         console.error("Error in fetching categories",err);
     }
@@ -361,6 +771,14 @@ exports.getEditCategory=async(req,res)=>{
 exports.postEditCategory = async (req, res) => {
     try {
         const categoryId = req.params.id;
+        const name=req.body.name
+        console.log("name", name);
+        const existingCategory= await Category.findOne({name:{ $regex: new RegExp(`^${name}$`, 'i') }}).exec()
+        console.log(existingCategory);
+        if(existingCategory){
+            req.flash("error", "Category with same name already exists!")
+            return res.redirect('/admin/add-category')
+        }
         // Update the product in the database using req.body
         await Category.findByIdAndUpdate(categoryId, req.body);
         // Redirect or send a response indicating success
@@ -419,8 +837,28 @@ exports.postAddCategories=async(req,res)=>{
 
 exports.getOrders=async(req,res)=>{
     try{
-        const orders = await Order.find().sort({ createdAt: -1 }).populate('items.product').exec();
-                return res.render('admin/orders',{orders})
+
+         
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10; // Adjust the limit as needed
+    const skip = (page - 1) * limit;
+    const orders = await Order.find().sort({ createdAt: -1 }).populate('items.product').limit(limit).skip(skip).exec();
+    const totalOrders = await Order.countDocuments();
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    const startIndex = skip + 1;
+
+            // const orders = await Order.find().sort({ createdAt: -1 }).populate('items.product').limit(limit).skip(skip).exec();
+                return res.render('admin/orders',{orders,
+                    currentPage: page,
+                    totalPages,
+                    hasNextPage: page < totalPages,
+                    hasPreviousPage: page > 1,
+                    nextPage: page + 1,
+                    previousPage: page - 1,
+                    lastPage: totalPages,
+                    startIndex,
+                    limit })
     }catch(err){
         console.error("Error in fetching categories",err);
     }
@@ -465,6 +903,15 @@ exports.postUpdateOrderStatus=(async(req,res)=>{
             console.log("status from drop down:",status);
             order.orderStatus=status;
             await order.save();
+            if(status==='delivered'){
+                for (const item of order.items) {
+                    await Product.findOneAndUpdate(
+                      { _id: item.product, "sizes.size": item.size },
+                      { $inc: { "sizes.$.quantity": -item.quantity } },
+                      { new: true }
+                    );
+                  }
+            }
             return res.redirect('/admin/orders')
         }
 
@@ -474,6 +921,95 @@ exports.postUpdateOrderStatus=(async(req,res)=>{
     }
 })
 
+
+// List all coupons
+exports.getCoupons = async (req, res) => {
+    try {
+        const coupons = await Coupon.find().sort({ createdAt: -1 });
+        res.render('admin/coupons', { coupons });
+    } catch (err) {
+        console.error("Error fetching coupons:", err);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+exports.postUpdateCouponStatus=(async(req,res)=>{
+    try{
+        const {couponId}=req.body
+        const coupon=await Coupon.findById(couponId)
+        if(!coupon){
+            return res.status(200).send("Coupon not found")
+        }else{
+            coupon.status=!coupon.status;
+            await coupon.save();
+            return res.redirect('/admin/coupons')
+        }
+
+    }catch(err){
+        console.error("error in updating the status of the coupon",err);
+        res.redirect('/admin/dashboard')
+    }
+})
+
+// Render form to add a new coupon
+exports.getAddCoupon = (req, res) => {
+    try{
+        res.render('admin/add-coupon');
+    }catch(err){
+        console.error("error in getting add coupon page", err);
+        return res.redirect('/admin/coupons')
+    }
+    
+};
+
+// Handle creating a new coupon
+exports.postAddCoupon = async (req, res) => {
+    const { couponCode, type, minimumPrice, discount, maxRedeem, expiry } = req.body;
+    try {
+        const existingCoupon= await Coupon.findOne({couponCode:{ $regex: new RegExp(`^${couponCode}$`, 'i') }}).exec()
+        if(existingCoupon){
+            req.flash("error", "Coupon with same name already exists!")
+            return res.redirect('/admin/add-coupon')
+        }
+        const newCoupon = new Coupon({ couponCode, type, minimumPrice, discount, maxRedeem, expiry});
+        await newCoupon.save();
+        res.redirect('/admin/coupons');
+    } catch (err) {
+        console.error("Error adding coupon:", err);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+// Render form to edit an existing coupon
+exports.getEditCoupon = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const coupon = await Coupon.findById(id);
+        if (!coupon) {
+            return res.status(404).send("Coupon not found");
+        }
+        res.render('admin/edit-coupon', { coupon });
+    } catch (err) {
+        console.error("Error fetching coupon:", err);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+// Handle updating an existing coupon
+exports.postEditCoupon = async (req, res) => {
+    const { id } = req.params;
+    const { couponCode, type, minimumPrice, discount, maxRedeem, expiry, status } = req.body;
+    try {
+        const coupon = await Coupon.findByIdAndUpdate(id, { couponCode, type, minimumPrice, discount, maxRedeem, expiry, status }, { new: true });
+        if (!coupon) {
+            return res.status(404).send("Coupon not found");
+        }
+        res.redirect('/admin/coupons');
+    } catch (err) {
+        console.error("Error updating coupon:", err);
+        res.status(500).send("Internal Server Error");
+    }
+};
 
 exports.getLogoutPage=(req,res)=>{
     try {

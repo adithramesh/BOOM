@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+  <!DOCTYPE HTML>
 <html lang="en">
 
 
@@ -37,69 +37,46 @@
         </div>
         <nav>
             <ul class="menu-aside">
-                <li class="menu-item active">
+                <li class="menu-item" id="dashboard">
                     <a class="menu-link" href="/admin/dashboard"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
 
-                <li class="menu-item">
+                <li class="menu-item" id="customers">
                     <a class="menu-link" href="/admin/customers"> 
                         <i class="icon material-icons md-person"></i>
                         <span class="text">Customers</span>
                     </a>
                 </li>
                 
-                <li class="menu-item">
+                <li class="menu-item" id="products">
                     <a class="menu-link" href="/admin/products"> 
                         <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
                 </li>
 
-                <li class="menu-item">
+                <li class="menu-item" id="categories">
                     <a class="menu-link" href="/admin/categories"> 
                         <i class="icon material-icons md-add_box"></i>
                         <span class="text">Categories</span>
                     </a>
                 </li>
 
-                <li class="menu-item">
+                <li class="menu-item" id="orders">
                     <a class="menu-link" href="/admin/orders"> 
                         <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
                     </a>
                 </li>
 
-                <li class="menu-item">
-                    <a class="menu-link" href="/admin/banners"> 
-                        <i class="icon material-icons md-flag"></i>
-                        <span class="text">Banners</span>
-                    </a>
-                </li>
-
-                <li class="menu-item">
+                <li class="menu-item" id="coupons">
                     <a class="menu-link" href="/admin/coupons"> 
                         <i class="icon material-icons md-monetization_on"></i>
                         <span class="text">Coupons</span>
                     </a>
                 </li>
-
-                
-                <!-- <li class="menu-item">
-                    <a class="menu-link" href="page-reviews.html"> <i class="icon material-icons md-comment"></i>
-                        <span class="text">Reviews</span>
-                    </a>
-                </li> -->
-                <!-- <li class="menu-item">
-                    <a class="menu-link" href="page-brands.html"> <i class="icon material-icons md-stars"></i>
-                        <span class="text">Brands</span> </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" disabled href="#"> <i class="icon material-icons md-pie_chart"></i>
-                        <span class="text">Statistics</span>
-                    </a>
-                </li> -->
             </ul>
             <hr>
             <br>
@@ -186,7 +163,7 @@
                     <!-- Image upload form -->
                     <div class="row mt-3">
                         <div class="col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-10 offset-sm-1 col-12">
-                            <form action="/admin/add-products" method="POST" enctype="multipart/form-data">
+                            <form action="/admin/add-products" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
                                 <!-- Product Name -->
                                 <div class="form-group">
                                     <label for="name">Product Name:</label>
@@ -209,40 +186,6 @@
                                         <% }); %>
                                     </select>
                                 </div>
-
-                                <!-- Quantity
-                                <div class="form-group">
-                                    <label for="quantity">Quantity:</label>
-                                    <input type="number" name="quantity" id="quantity" class="form-control" onkeyup="validateQuantity()" required>
-                                    <span id="quantityError"></span>
-                                </div>
-
-                                size
-                                <div class="form-group">
-                                    <label for="size">Size:</label>
-                                    <div class="d-flex flex-wrap">
-                                        <div class="form-check mr-3">
-                                            <input class="form-check-input" type="checkbox" name="sizes[]" id="sizeXS" value="XS">
-                                            <label class="form-check-label" for="sizeXS">Extra Small</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        </div>
-                                        <div class="form-check mr-3">
-                                            <input class="form-check-input" type="checkbox" name="sizes[]" id="sizeS" value="S">
-                                            <label class="form-check-label" for="sizeS">Small</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        </div>
-                                        <div class="form-check mr-3">
-                                            <input class="form-check-input" type="checkbox" name="sizes[]" id="sizeM" value="M">
-                                            <label class="form-check-label" for="sizeM">Medium</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        </div>
-                                        <div class="form-check mr-3">
-                                            <input class="form-check-input" type="checkbox" name="sizes[]" id="sizeL" value="L">
-                                            <label class="form-check-label" for="sizeL">Large</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="sizes[]" id="sizeXL" value="XL">
-                                            <label class="form-check-label" for="sizeXL">Extra Large</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        </div>
-                                    </div>
-                                </div> -->
 
                                 <!-- Quantity and Size -->
                                 <div class="form-group">
@@ -284,10 +227,23 @@
                                     <input type="text" name="colour" id="colour" class="form-control" required>
                                 </div>
                                 <!-- Price -->
-                                <div class="form-group">
+                                <!-- <div class="form-group">
                                     <label for="price">Price:</label>
                                     <input type="number" name="price" id="price" class="form-control"  onkeyup="validatePrice()" required>
                                     <span id="priceError"></span>
+                                </div> -->
+
+                               <!-- Original Price -->
+                                <div class="form-group">
+                                    <label for="originalPrice">Original Price:</label>
+                                    <input type="number" name="originalPrice" id="originalPrice" class="form-control" required>
+                                    <span id="priceError"></span>    
+                                </div>
+
+                                <!-- Discount Percentage -->
+                                <div class="form-group">
+                                    <label for="discountPercentage">Discount Percentage:</label>
+                                    <input type="number" name="discountPercentage" id="discountPercentage" class="form-control" min="0" max="90" required>
                                 </div>
                                 <!-- Product Images -->
                                 
@@ -403,8 +359,50 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- Main Script -->
-   
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const menuItems = document.querySelectorAll('.menu-item');
+
+            menuItems.forEach(item => {
+                const link = item.querySelector('a');
+                if (link.getAttribute('href') === currentPath) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+    </script>
+    <script>
+        // var isValidateQuantity=validateQuantity();
+        // var isValidatePrice=validatePrice()
+        // if(isValidateQuantity && isValidatePrice){
+        //     return true;
+        // }
+        function validateForm() {
+        // Get input values
+        const productName = document.getElementById('name').value;
+        const productDescription = document.getElementById('description').value;
+
+        // Regex patterns for validation
+        const nameRegex = /\S+/; // Matches any non-whitespace character
+        const descriptionRegex = /\S+/; // Matches any non-whitespace character
+
+        // Validate Product Name
+        if (!nameRegex.test(productName)) {
+            alert('Product Name should not be empty or contain only spaces.');
+            return false;
+        }
+
+        // Validate Product Description
+        if (!descriptionRegex.test(productDescription)) {
+            alert('Product Description should not be empty or contain only spaces.');
+            return false;
+        }
+
+        return true; // Form submission allowed
+    }
         function validateQuantity(){
             
             const quantity=document.getElementById("quantity").value
@@ -421,9 +419,9 @@
 
         function validatePrice(){
             
-            const price=document.getElementById("price").value
+            const price=document.getElementById("originalPrice").value
             const priceError=document.getElementById("priceError")
-            if (price<=0){
+            if (originalPrice<=0){
                 priceError.innerHTML="Enter a positive value"
                 priceError.style.color="red"
                return false

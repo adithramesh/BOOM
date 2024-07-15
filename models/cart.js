@@ -51,11 +51,26 @@ const cartSchema = new mongoose.Schema({
         required: true
     },
     items: [cartItemSchema],
+    subTotal: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     totalPrice: {
         type: Number,
         required: true,
         default: 0
-    }
+    },
+    discount: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    deliveryCharge:{
+        type: Number,
+        required: true,
+        default: 150,
+    },
 });
 
 const Cart = mongoose.model('Cart', cartSchema);

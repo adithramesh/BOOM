@@ -1,22 +1,31 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const categorySchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
+  name: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+  },
+  isBlocked: {
+    type: Boolean,
+    default: false,
+  },
+  products: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
     },
-    description: {
-        type: String
-    },
-    isBlocked:{
-        type:Boolean,
-        default:false
-    },
-    products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
-    // subcategories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }]
-    
+  ],
+  discountPercentage: {
+    type: Number,
+    min: 0,
+    max: 90,
+    default: 0,
+  },
 });
 
-const Category = mongoose.model('Category', categorySchema);
+const Category = mongoose.model("Category", categorySchema);
 
 module.exports = Category;

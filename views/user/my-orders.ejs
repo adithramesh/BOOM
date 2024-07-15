@@ -1,185 +1,442 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <title>My Orders &mdash; BOOM</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>My Orders &mdash; BOOM</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
-    <link rel="stylesheet" href="fonts/icomoon/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
+  <link rel="stylesheet" href="fonts/icomoon/style.css">
 
-    <link rel="stylesheet" href="/user/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/user/css/magnific-popup.css">
-    <link rel="stylesheet" href="/user/css/jquery-ui.css">
-    <link rel="stylesheet" href="/user/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="/user/css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="/user/css/aos.css">
-    <link rel="stylesheet" href="/user/css/style.css">
-    <style>
-        .order-table th, .order-table td {
-            vertical-align: middle;
-        }
-        .order-items {
-            display: none;
-        }
-        .order-item-details {
-            cursor: pointer;
-        }
-    </style>
+  <link rel="stylesheet" href="/user/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/user/css/magnific-popup.css">
+  <link rel="stylesheet" href="/user/css/jquery-ui.css">
+  <link rel="stylesheet" href="/user/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="/user/css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="/user/css/aos.css">
+  <link rel="stylesheet" href="/user/css/style.css">
+  <style>
+    .order-table th,
+    .order-table td {
+      vertical-align: middle;
+    }
+
+    .order-items {
+      display: none;
+    }
+
+    .order-item-details {
+      cursor: pointer;
+    }
+
+    /* Adjust button height */
+    .btn-sm {
+      height: 30px;
+      /* Adjust as needed */
+      line-height: 1.5;
+    }
+
+    /* Ensure uniform button width and height */
+    .w-100 {
+      width: 100%;
+    }
+
+    .mb-2 {
+      margin-bottom: 8px;
+      /* Adjust as needed */
+    }
+  </style>
 </head>
+
 <body>
   <div class="site-wrap">
 
     <div class="site-navbar bg-white py-2">
-        <div class="container">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="logo">
-                    <div class="site-logo">
-                        <a href="/user/index" class="js-logo-clone">BOOM</a>
-                    </div>
-                </div>
-
-                <div class="main-nav d-none d-lg-block">
-                    <nav class="site-navigation text-right text-md-center" role="navigation">
-                        <ul class="site-menu js-clone-nav d-none d-lg-block">
-                            <li class="has-children active">
-                                <a href="/user/index">Home</a>
-                                <ul class="dropdown">
-                                    <li><a href="#">Menu One</a></li>
-                                    <li><a href="#">Menu Two</a></li>
-                                    <li><a href="#">Menu Three</a></li>
-                                    <li class="has-children">
-                                        <a href="#">Sub Menu</a>
-                                        <ul class="dropdown">
-                                            <li><a href="#">Menu One</a></li>
-                                            <li><a href="#">Menu Two</a></li>
-                                            <li><a href="#">Menu Three</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-
-                            <li><a href="/user/shop">Shop</a></li>
-                            <li><a href="#">Catalogue</a></li>
-                            <li><a href="#">New Arrivals</a></li>
-                            <li><a href="contact.html">Contact</a></li>
-                        </ul>
-                    </nav>
-                </div>
-
-                <div class="icons">
-                    <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
-                    <a href="/user/user-profile" class="icons-btn d-inline-block"><span class="icon-user"></span></a>
-                    <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
-                    <a href="/user/cart" class="icons-btn d-inline-block bag">
-                        <span class="icon-shopping-bag"></span>
-                        <!-- <span class="number">2</span> -->
-                    </a>
-                    <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span class="icon-menu"></span></a>
-                </div>
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="logo">
+            <div class="site-logo">
+              <a href="/user/index" class="js-logo-clone">BOOM</a>
             </div>
+          </div>
+
+          <div class="main-nav d-none d-lg-block">
+            <nav class="site-navigation text-right text-md-center" role="navigation">
+              <ul class="site-menu js-clone-nav d-none d-lg-block">
+                <li class="active">
+                  <a href="/user/index">Home</a>
+                </li>
+
+
+                <li><a href="/user/shop">Shop</a></li>
+
+              </ul>
+            </nav>
+          </div>
+
+          <div class="icons">
+            <!-- <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a> -->
+            <a href="/user/user-profile" class="icons-btn d-inline-block"><span class="icon-user"></span></a>
+            <a href="/user/wishlist" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
+            <a href="/user/cart" class="icons-btn d-inline-block bag">
+              <span class="icon-shopping-bag"></span>
+              <!-- <span class="number">2</span> -->
+            </a>
+            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
+                class="icon-menu"></span></a>
+          </div>
         </div>
+      </div>
     </div>
-            <!-- Breadcrumbs -->
-            <div class="bg-light py-3">
-              <div class="container">
-                <div class="row">
-                  <div class="col-md-12 mb-0"><a href="/user/index">Home</a> <span class="mx-2 mb-0">/ <a href="/user/user-profile">Profile</a> <span class="mx-2 mb-0">/ </span> <strong class="text-black">Shop</strong></div>
-                </div>
-              </div>
+    <!-- Breadcrumbs -->
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0"><a href="/user/index">Home</a> <span class="mx-2 mb-0">/ <a
+                href="/user/user-profile">Profile</a> <span class="mx-2 mb-0">/ </span> <strong
+                class="text-black">Shop</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-md-12 text-center">
+            <h2 class="display-4">My Orders</h2>
+          </div>
+        </div>
+        <div>
+          <% if (messages.success) { %>
+            <div class="alert alert-success" role="alert">
+              <%= messages.success %>
             </div>
+            <% } %>
+        </div>
 
-        <div class="site-section">
-            <div class="container">
-                <div class="row mb-5">
-                    <div class="col-md-12 text-center">
-                        <h2 class="display-4">My Orders</h2>
-                    </div>
-                </div>
+        <% if (orders.length> 0) { %>
+          <table class="table table-bordered order-table">
+            <thead>
+              <tr>
+                <th>Sl. No.</th>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Order Time</th>
+                <th>Order Status</th>
+                <th>Payment Method</th>
+                <th>Delivery Address</th>
+                <th>Total Amount</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
 
-                <% if (orders.length > 0) { %>
-                    <table class="table table-bordered order-table">
-                        <thead>
-                            <tr>
-                                <th>Sl. No.</th>
-                                <th>Order ID</th>
-                                <th>Order Date</th>
-                                <th>Order Time</th>
-                                <th>Order Status</th>
-                                <th>Payment Method</th>
-                                <th>Delivery Address</th>
-                                <th>Total Amount</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% orders.forEach((order, index) => { %>
-                                <tr class="order-item-details" data-toggle="order-items-<%= order._id %>">
-                                    <td><%= index + 1 %></td>
-                                    <td><%= order.orderId %></td>
-                                    <td><%= order.date.toDateString() %></td>
-                                    <td><%= order.date.toTimeString().split(' ')[0] %></td>
-                                    <td><%= order.orderStatus %></td>
-                                    <td><%= order.paymentOption %></td>
-                                    <td><%= order.deliveryAddress %></td>
-                                    <td>₹<%= order.amount %></td>
-                                    <td>
-                                        <% if (order.orderStatus === 'Pending') { %>
-                                            <form action="/user/orders/cancel/<%= order._id %>" method="GET" class="d-inline">
-                                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
-                                            </form>
-                                        <% } %>
-                                        <button class="btn btn-info btn-sm" onclick="toggleOrderItems('<%= order._id %>')">View Items</button>
-                                    </td>
-                                </tr>
-                                <tr id="order-items-<%= order._id %>" class="order-items">
-                                    <td colspan="8">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Sl. No.</th>
-                                                    <th>Product Name</th>
-                                                    <th>Size</th>
-                                                    <th>Quantity</th>
-                                                    <th>Price</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <% order.items.forEach((item,index) => { %>
-                                                    <tr>
-                                                        <td><%= index + 1 %></td>
-                                                        <td><%= item.product ? item.product.name : 'Unknown Product' %></td>
-                                                        <td> <%= item.size %></td>    
-                                                        <td><%= item.quantity %></td>
-                                                        <td>₹<%= item.price %></td>
-                                                    </tr>
-                                                <% }); %>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        </tbody>
+            <tbody>
+              <% orders.forEach((order, index)=> { %>
+                <tr class="order-item-details" data-toggle="order-items-<%= order._id %>">
+                  <td>
+                    <%= index + startIndex %>
+                  </td>
+                  <td>
+                    <%= order.orderId %>
+                  </td>
+                  <td>
+                    <%= order.date.toDateString() %>
+                  </td>
+                  <td>
+                    <%= order.date.toTimeString().split(' ')[0] %></td>
+                                <td><%= order.orderStatus %></td>
+                                <td><%= order.paymentOption %></td>
+                                <td><%= order.deliveryAddress %></td>
+                                <td>₹<%= order.amount %></td>
+                                <td>
+                                  <% if (order.orderStatus === 'Pending') { %>
+                                    <form action="/user/orders/update-status/<%= order._id %>" method="POST" class="d-inline w-100 mb-2">
+                                      <input type="hidden" name="action" value="cancel">
+                                      <button type="submit" class="btn btn-danger btn-sm w-100 mb-2">Cancel</button>
+                                    </form>
+                                  <% } %>
+                                  
+                                  <% if (order.orderStatus === 'Pending' && order.paymentStatus === 'Failure') { %>
+                                    <button class="btn btn-warning btn-sm w-100 mb-2" onclick="retryPayment('<%= order._id %>')">Retry Payment</button>
+                                  <% } %>
+                                  
+                                  <% if (order.orderStatus === 'delivered') { %>
+                                    <form action="/user/orders/update-status/<%= order._id %>" method="POST" class="d-inline w-100 mb-2">
+                                      <input type="hidden" name="action" value="return">
+                                      <button type="submit" class="btn btn-warning btn-sm w-100 mb-2">Return</button>
+                                    </form>
+                                    <a href="/user/orders/download-invoice/<%= order._id %>" class="btn btn-success btn-sm w-100 mb-2">Download Invoice</a>
+                                  <% } %>
+                                  <button class="btn btn-info btn-sm w-100 mb-2" onclick="toggleOrderItems('<%= order._id %>')">View Items</button>                                  
+                  </td>
+                </tr>
+                <tr id="order-items-<%= order._id %>" class="order-items">
+                  <td colspan="8">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Sl. No.</th>
+                          <th>Product Name</th>
+                          <th>Size</th>
+                          <th>Quantity</th>
+                          <th>Price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% order.items.forEach((item, index)=> { %>
+                          <tr>
+                            <td>
+                              <%= index + 1 %>
+                            </td>
+                            <td>
+                              <%= item.product ? item.product.name : 'Unknown Product' %>
+                            </td>
+                            <td>
+                              <%= item.size %>
+                            </td>
+                            <td>
+                              <%= item.quantity %>
+                            </td>
+                            <td>₹<%= item.price %>
+                            </td>
+                          </tr>
+                          <% }); %>
+                      </tbody>
                     </table>
-                <% } else { %>
-                    <p>No orders found.</p>
-                <% } %>
-            </div>
-        </div>
+                  </td>
+                </tr>
+                <% }); %>
+            </tbody>
+
+          </table>
+          <% } else { %>
+            <p>No orders found.</p>
+            <% } %>
+
+              <!-- Pagination Controls -->
+              <nav aria-label="Page navigation example" class="d-flex justify-content-center my-4">
+                <ul class="pagination">
+                  <% if (hasPreviousPage) { %>
+                    <li class="page-item"><a class="page-link" href="/user/my-orders?page=1">First</a></li>
+                    <li class="page-item"><a class="page-link"
+                        href="/user/my-orders?page=<%= previousPage %>">Previous</a></li>
+                    <% } else { %>
+                      <li class="page-item disabled"><span class="page-link">First</span></li>
+                      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                      <% } %>
+
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                          <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                            <a class="page-link" href="/user/my-orders?page=<%= i %>">
+                              <%= i %>
+                            </a>
+                          </li>
+                          <% } %>
+
+                            <% if (hasNextPage) { %>
+                              <li class="page-item"><a class="page-link"
+                                  href="/user/my-orders?page=<%= nextPage %>">Next</a></li>
+                              <li class="page-item"><a class="page-link"
+                                  href="/user/my-orders?page=<%= lastPage %>">Last</a></li>
+                              <% } else { %>
+                                <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                <li class="page-item disabled"><span class="page-link">Last</span></li>
+                                <% } %>
+                </ul>
+              </nav>
+      </div>
     </div>
- <!-- Include your footer template here -->
-    <script src="/user/js/jquery-3.3.1.min.js"></script>
-    <script src="/user/js/jquery-ui.js"></script>
-    <script src="/user/js/popper.min.js"></script>
-    <script src="/user/js/bootstrap.min.js"></script>
-    <script src="/user/js/owl.carousel.min.js"></script>
-    <script src="/user/js/jquery.magnific-popup.min.js"></script>
-    <script src="/user/js/aos.js"></script>
-    <script src="/user/js/main.js"></script>
-    <script>
-        function toggleOrderItems(orderId) {
-            $('#order-items-' + orderId).toggle();
+
+  </div>
+  </div>
+  </div>
+  <!-- Include your footer template here -->
+  <script src="/user/js/jquery-3.3.1.min.js"></script>
+  <script src="/user/js/jquery-ui.js"></script>
+  <script src="/user/js/popper.min.js"></script>
+  <script src="/user/js/bootstrap.min.js"></script>
+  <script src="/user/js/owl.carousel.min.js"></script>
+  <script src="/user/js/jquery.magnific-popup.min.js"></script>
+  <script src="/user/js/aos.js"></script>
+  <script src="/user/js/main.js"></script>
+  <script>
+    function toggleOrderItems(orderId) {
+      $('#order-items-' + orderId).toggle();
+    }
+  </script>
+  <script>
+
+    //       async function retryPayment(orderId) {
+    //     try {
+    //         // Fetch retry payment endpoint with orderId
+    //         const response = await fetch(`/user/orders/retry-payment/${orderId}`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error('Failed to retry payment.');
+    //         }
+
+    //         // Retrieve order data from response
+    //         const orderData = await response.json();
+
+    //         // Configure Razorpay options for retry payment
+    //         const options = {
+    //             key: 'rzp_test_qzAibN7X6K7MAx',
+    //             amount: orderData.order.amount,
+    //             currency: 'INR',
+    //             name: 'BOOM Apparel Shopping',
+    //             description: 'Order Payment',
+    //             order_id: orderData.order.id,
+    //             handler: function(response) {
+    //                 // Construct payment details for retry payment
+    //                 const paymentDetails = {
+    //                     selectedAddressId: orderData.order.selectedAddressId,
+    //                     selectedPaymentMethod: orderData.order.selectedPaymentMethod,
+    //                     razorpay_payment_id: response.razorpay_payment_id,
+    //                     razorpay_order_id: response.razorpay_order_id,
+    //                     razorpay_signature: response.razorpay_signature
+    //                 };
+
+    //                 // Send payment details to server for verification
+    //                 fetch('/user/orders/status', {
+    //                     method: 'POST',
+    //                     headers: {
+    //                         'Content-Type': 'application/json'
+    //                     },
+    //                     body: JSON.stringify(paymentDetails)
+    //                 })
+    //                 .then(res => res.json())
+    //                 .then(data => {
+    //                     // Handle server response for retry payment
+    //                     if (data.success) {
+    //                         // Redirect to thank you page on successful retry payment
+    //                         window.location.href = '/user/thankyou';
+    //                     } else {
+    //                         // Display error and handle retry payment failure
+    //                         alert('Payment verification failed.');
+    //                     }
+    //                 })
+    //                 .catch(error => {
+    //                     console.error('Error processing payment:', error);
+    //                     alert('Failed to process payment.');
+    //                 });
+    //             },
+    //             theme: {
+    //                 color: '#3399cc'
+    //             }
+    //         };
+
+    //         // Initialize Razorpay instance with options and open payment modal for retry payment
+    //         const rzp1 = new Razorpay(options);
+    //         rzp1.open();
+
+    //     } catch (error) {
+    //         console.error('Error retrying payment:', error);
+    //         alert('Failed to retry payment.');
+    //     }
+    // }
+
+    async function retryPayment(orderId) {
+      try {
+        // Fetch retry payment endpoint with orderId
+        const response = await fetch(`/user/orders/retry-payment/${orderId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to retry payment.');
         }
-    </script>
+
+        const responseData = await response.json();
+
+        // Check if retry payment was successful
+        if (responseData.success) {
+          // Configure Razorpay options for retry payment
+          const options = {
+            key: 'rzp_test_qzAibN7X6K7MAx',
+            amount: responseData.order.amount,
+            currency: 'INR',
+            name: 'BOOM Apparel Shopping',
+            description: 'Order Payment',
+            order_id: responseData.order.id,
+            handler: async function (response) {
+              try {
+                // Construct payment details for retry payment
+                const paymentDetails = {
+                  selectedAddressId: responseData.selectedAddressId,
+                  selectedPaymentMethod: responseData.selectedPaymentMethod,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_signature: response.razorpay_signature
+                };
+
+                // Send payment details to server for verification
+                const verificationResponse = await fetch('/user/orders/status', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(paymentDetails)
+                });
+
+                if (!verificationResponse.ok) {
+                  throw new Error('Failed to verify payment.');
+                }
+
+                const data = await verificationResponse.json();
+
+                // Handle server response
+                if (data.success) {
+                  // Redirect to thank you page on successful payment
+                  window.location.href = '/user/thankyou';
+                } else {
+                  // Display error and redirect to my orders page on payment failure
+                  alert('Payment verification failed.');
+                  window.location.href = '/user/my-orders';
+                }
+              } catch (error) {
+                console.error('Error processing payment:', error);
+                alert('Failed to process payment.');
+                window.location.href = '/user/my-orders'; // Redirect to orders page on failure
+              }
+            },
+            theme: {
+              color: '#3399cc'
+            },
+            modal: {
+              ondismiss: function () {
+                alert('Payment failed or was cancelled.');
+                window.location.href = '/user/orders/status'; // Redirect to orders page on failure
+              }
+            }
+          };
+
+          // Initialize Razorpay instance with options and open payment modal for retry payment
+          const rzp1 = new Razorpay(options);
+          rzp1.open();
+        } else {
+          // Handle failure scenario
+          alert('Payment retry failed.');
+        }
+      } catch (error) {
+        console.error('Error retrying payment:', error);
+        alert('Failed to process payment retry.');
+      }
+    }
+
+
+
+
+  </script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </body>
+
 </html>

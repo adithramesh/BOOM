@@ -12,6 +12,12 @@ router.post('/login',adminControllers.postLoginPage)
 
 router.get("/dashboard",adminControllers.getDashboardPage)
 
+router.post('/sales-report',adminControllers.postSalesReport)
+
+router.get('/sales-report/excel', adminControllers.getExcelSalesReport);
+
+router.get('/dashboard/product-counts/:timeframe',adminControllers.getCharts)
+
 router.get('/customers',protectRoute.isAuth,adminControllers.getCustomers)
 
 router.post('/update-customer-status',protectRoute.isAuth,adminControllers.postUpdateCustomerStatus)
@@ -46,9 +52,17 @@ router.get('/orders',protectRoute.isAuth,adminControllers.getOrders)
 
 router.post('/update-order-status',protectRoute.isAuth,adminControllers.postUpdateOrderStatus)
 
-// router.get('/edit-order/:id',protectRoute.isAuth,adminControllers.getEditOrder)
+router.get('/coupons',protectRoute.isAuth,adminControllers.getCoupons)
 
-// router.post('/edit-order/:id',protectRoute.isAuth,adminControllers.postEditOrder)
+router.post('/update-coupon-status',protectRoute.isAuth,adminControllers.postUpdateCouponStatus)
+
+router.get('/add-coupon',protectRoute.isAuth,adminControllers.getAddCoupon)
+
+router.post('/add-coupon',protectRoute.isAuth,adminControllers.postAddCoupon)
+
+router.get('/edit-coupon/:id',protectRoute.isAuth,adminControllers.getEditCoupon)
+
+router.post('/edit-coupon/:id',protectRoute.isAuth,adminControllers.postEditCoupon)
 
 router.get('/logout',protectRoute.isAuth,adminControllers.getLogoutPage)
 

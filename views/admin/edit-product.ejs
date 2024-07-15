@@ -8,7 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Add your CSS files here -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
-    <link href="/path/to/your/custom.css" rel="stylesheet" type="text/css" />
+
+    <link href="/admin/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -45,6 +47,10 @@
             border-radius: 5px;
             box-sizing: border-box;
         }
+        input[type="number"].size-quantity-input {
+            width: calc(100% - 20px); /* Adjust width as needed */
+            padding: 5px; /* Adjust padding as needed */
+        }
         button[type="submit"] {
             display: block;
             width: 100%;
@@ -59,116 +65,94 @@
         button[type="submit"]:hover {
             background-color: #0056b3;
         }
+        .error {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Edit Product</h2>
-        <form id="editProductForm" method="POST" action="/admin/edit-product/<%= product._id %>" enctype="multipart/form-data">
+        <form id="editProductForm" method="POST" action="/admin/edit-product/<%= product._id %>" enctype="multipart/form-data" onsubmit="return validateForm()">
 
             <div class="form-group">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" value="<%= product.name %>" required>
+                <span id="nameError" class="error"></span>
             </div>
             <div class="form-group">
                 <label for="description">Description:</label>
                 <textarea id="description" name="description" required><%= product.description %></textarea>
+                <span id="descriptionError" class="error"></span>
             </div>
             <div class="form-group">
-                <label for="price">Price:</label>
-                <input type="number" id="price" name="price" value="<%= product.price %>"  onkeyup="validatePrice()" required>
+                <label for="originalPrice">Original Price:</label>
+                <input type="number" name="originalPrice" id="originalPrice" value="<%= product.originalPrice %>" class="form-control" required onkeyup="validatePrice()">
+                <span id="priceError"></span>    
             </div>
-                <!-- Quantity and Size -->
-                <div class="form-group">
-                    <label for="sizes">Sizes and Quantities:</label>
-                    <div class="d-flex flex-wrap">
+            <div class="form-group">
+                <label for="discountPercentage">Discount Percentage:</label>
+                <input type="number" name="discountPercentage" id="discountPercentage" value="<%= product.discountPercentage %>" class="form-control" min="0" max="90" required>
+            </div>
+            <div class="form-group">
+                <label for="sizes">Sizes and Quantities:</label>
+                <div class="d-flex flex-wrap">
+                    <% ['XS', 'S', 'M', 'L', 'XL'].forEach(size => { %>
                         <div class="form-check mr-3">
-                            <input class="form-check-input" type="checkbox" name="sizes[]" id="sizeXS" value="XS" onchange="toggleQuantityInput('XS')">
-                            <label class="form-check-label" for="sizeXS">Extra Small</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="number" name="quantities[XS]" id="quantityXS" class="form-control size-quantity-input" placeholder="Quantity for XS" style="display:none;">
+                            <input class="form-check-input" type="checkbox" name="sizes[]" id="size<%= size %>" value="<%= size %>" onchange="toggleQuantityInput('<%= size %>')" <% if (product.sizes.some(item => item.size === size)) { %> checked <% } %>>
+                            <label class="form-check-label" for="size<%= size %>"><%= size %></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="number" name="quantities[<%= size %>]" id="quantity<%= size %>" class="form-control size-quantity-input" placeholder="Quantity for <%= size %>" style="display:<%= product.sizes.some(item => item.size === size) ? 'block' : 'none' %>" value="<%= product.sizes.find(item => item.size === size)?.quantity || '' %>">
+                            <span id="quantityError<%= size %>" class="error"></span>
                         </div>
-                        <div class="form-check mr-3">
-                            <input class="form-check-input" type="checkbox" name="sizes[]" id="sizeS" value="S" onchange="toggleQuantityInput('S')">
-                            <label class="form-check-label" for="sizeS">Small</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="number" name="quantities[S]" id="quantityS" class="form-control size-quantity-input" placeholder="Quantity for S" style="display:none;">
-                        </div>
-                        <div class="form-check mr-3">
-                            <input class="form-check-input" type="checkbox" name="sizes[]" id="sizeM" value="M" onchange="toggleQuantityInput('M')">
-                            <label class="form-check-label" for="sizeM">Medium</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="number" name="quantities[M]" id="quantityM" class="form-control size-quantity-input" placeholder="Quantity for M" style="display:none;">
-                        </div>
-                        <div class="form-check mr-3">
-                            <input class="form-check-input" type="checkbox" name="sizes[]" id="sizeL" value="L" onchange="toggleQuantityInput('L')">
-                            <label class="form-check-label" for="sizeL">Large</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="number" name="quantities[L]" id="quantityL" class="form-control size-quantity-input" placeholder="Quantity for L" style="display:none;">
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="sizes[]" id="sizeXL" value="XL" onchange="toggleQuantityInput('XL')">
-                            <label class="form-check-label" for="sizeXL">Extra Large</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="number" name="quantities[XL]" id="quantityXL" class="form-control size-quantity-input" placeholder="Quantity for XL" style="display:none;">
-                        </div>
-                    </div>
+                    <% }); %>
                 </div>
+            </div>
             <div class="form-group">
                 <label for="colour">Colour:</label>
                 <input type="text" id="colour" name="colour" value="<%= product.colour %>" required>
+                <span id="colourError" class="error"></span>
             </div>
             <div class="form-group">
                 <label for="category">Category:</label>
                 <select id="category" name="category" required>
-
                     <% categories.forEach(category => { %>
                         <option value="<%= category._id %>" <%= product.category == category._id ? 'selected' : '' %>><%= category.name %></option>
                     <% }); %>
                 </select>
             </div>
-            <!-- <div class="form-group">
-                <label for="Images">Images:</label>
-                <input type="file" id="imageInput" accept="image/*" multiple class="form-control-file" required> 
-                <div id="selectedImahes">
-                    <% product.images.forEach(image => { %>
-                        <img src="<%= product.images[0] %>" alt="Product Image" style="width: 100px; margin-right: 10px;">
-                    <% }); %>
-                      
-                   </div>
-                </div>
-            </div> -->
             <div class="form-group">
                 <label for="Images">Images:</label>
-                
-                <input type="file" id="images" name="images[]" accept="image/*" multiple class="form-control-file" >
-
+                <input type="file" id="images" name="images[]" accept="image/*" multiple class="form-control-file">
                 <div id="selectedImages">
                     <% product.images.forEach(images => { %>
                         <img src="<%= images %>" alt="Product Image" style="width: 100px; margin-right: 10px;">
                     <% }); %>
                 </div>
             </div>
-            <!-- <button type="submit">Upload Image</button> -->
-            <button type="submit"  class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 <script>
-    function validateQuantity(){
+    // function validateQuantity(){
         
-        const quantity=document.getElementById("quantity").value
-        const quantityError=document.getElementById("quantityError")
-        if (quantity<=0){
-           quantityError.innerHTML="Enter a positive value"
-           quantityError.style.color="red"
-           return false
-        }else{
-            quantityError.innerHTML=""
-            return true
-        }
-    }
+    //     const quantity=document.getElementById("quantity").value
+    //     const quantityError=document.getElementById("quantityError")
+    //     if (quantity<=0){
+    //        quantityError.innerHTML="Enter a positive value"
+    //        quantityError.style.color="red"
+    //        return false
+    //     }else{
+    //         quantityError.innerHTML=""
+    //         return true
+    //     }
+    // }
 
     function validatePrice(){
         
-        const price=document.getElementById("price").value
+        const price=document.getElementById("originalprice").value
         const priceError=document.getElementById("priceError")
         if (price<=0){
             priceError.innerHTML="Enter a positive value"
@@ -232,6 +216,60 @@
 
 </script>
 <script>
+
+function validateQuantity(size) {
+        const quantityInput = document.getElementById('quantity' + size);
+        const quantityError = document.getElementById('quantityError' + size);
+        const quantity = quantityInput.value;
+        if (quantity <= 0) {
+            quantityError.innerHTML = "Enter a positive value";
+            return false;
+        } else {
+            quantityError.innerHTML = "";
+            return true;
+        }
+    }
+
+    function validateField(fieldId, errorId, errorMessage, regex = null) {
+        const field = document.getElementById(fieldId);
+        const errorField = document.getElementById(errorId);
+        if (!field.value.trim()) {
+            errorField.innerHTML = errorMessage;
+            return false;
+        } else if (regex && !regex.test(field.value.trim())) {
+            errorField.innerHTML = "Invalid format";
+            return false;
+        } else {
+            errorField.innerHTML = "";
+            return true;
+        }
+    }
+
+    function validateForm() {
+        const sizes = ['XS', 'S', 'M', 'L', 'XL'];
+        let isValid = true;
+
+        // Validate sizes and quantities
+        sizes.forEach(size => {
+            if (document.getElementById('size' + size).checked) {
+                if (!validateQuantity(size)) {
+                    isValid = false;
+                }
+            }
+        });
+
+        // Regex patterns
+        const nameRegex = /^[a-zA-Z0-9\s]+$/; // Example regex for name
+        const descriptionRegex = /^[a-zA-Z0-9\s.,!?]+$/; // Example regex for description
+        const colourRegex = /^[a-zA-Z\s]+$/; // Example regex for colour
+
+        // Validate other fields with regex
+        if (!validateField('name', 'nameError', 'Name is required', nameRegex)) isValid = false;
+        if (!validateField('description', 'descriptionError', 'Description is required', descriptionRegex)) isValid = false;
+        if (!validateField('colour', 'colourError', 'Colour is required', colourRegex)) isValid = false;
+
+        return isValid;
+    }
     function toggleQuantityInput(size) {
         const quantityInput = document.getElementById('quantity' + size);
         if (document.getElementById('size' + size).checked) {

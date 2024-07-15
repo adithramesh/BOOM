@@ -1,49 +1,4 @@
-// const mongoose = require('mongoose');
 
-// const productSchema = new mongoose.Schema({
-//     name: {
-//         type: String,
-//         required: true
-//     },
-//     description: {
-//         type: String,
-//         required: true
-//     },
-//     price: {
-//         type: Number,
-//         required: true
-//     },
-//     images: {
-//         type: [String], // Assuming image URLs will be stored as strings
-//         required: true
-//     },
-//     quantity:{
-//         type: Number,
-//         required:true
-//     },
-//     size:{
-//         type:[String],
-//         required:true
-//     },
-//     colour:{
-//         type: String,
-//         required:true
-//     },
-//     category:{
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: 'Category'
-//     },
-//     isBlocked:{
-//         type:Boolean,
-//         default:false
-//     }
-// },
-// {timestamps:true}
-// );
-
-// const Product = mongoose.model('Product', productSchema);
-
-// module.exports = Product;
 
 const mongoose = require('mongoose');
 
@@ -66,6 +21,16 @@ const productSchema = new mongoose.Schema({
     description: {
         type: String,
         required: true
+    },
+    originalPrice:{
+        type:Number,
+        required:true
+    },
+    discountPercentage: {
+        type: Number,
+        min: 0,
+        max: 90,
+        default: 0
     },
     price: {
         type: Number,
@@ -92,6 +57,11 @@ const productSchema = new mongoose.Schema({
         default: false
     }
 }, { timestamps: true });
+
+// Method to calculate final price based on discount
+// productSchema.methods.calculateFinalPrice = function() {
+//     return this.originalPrice - (this.originalPrice * (this.discountPercentage / 100));
+// };
 
 const Product = mongoose.model('Product', productSchema);
 

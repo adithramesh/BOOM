@@ -1,38 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>BOOM &mdash; Apparel Shopping</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
-    <link rel="stylesheet" href="fonts/icomoon/style.css">
+<head>
+  <title>BOOM &mdash; Apparel Shopping</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="/user/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/user/css/magnific-popup.css">
-    <link rel="stylesheet" href="/user/css/jquery-ui.css">
-    <link rel="stylesheet" href="/user/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="/user/css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
+  <link rel="stylesheet" href="fonts/icomoon/style.css">
+
+  <link rel="stylesheet" href="/user/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/user/css/magnific-popup.css">
+  <link rel="stylesheet" href="/user/css/jquery-ui.css">
+  <link rel="stylesheet" href="/user/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="/user/css/owl.theme.default.min.css">
 
 
-    <link rel="stylesheet" href="/user/css/aos.css">
+  <link rel="stylesheet" href="/user/css/aos.css">
 
-    <link rel="stylesheet" href="/user/css/style.css">
-    
-  </head>
-  <body>
-  
+  <link rel="stylesheet" href="/user/css/style.css">
+  <style>
+    /* New styles for the search bar */
+    .search-wrap {
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .search-wrap .container {
+      display: flex;
+      align-items: center;
+    }
+
+    .search-form {
+      display: flex;
+      width: 100%;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 10px 15px;
+      border: 2px solid #ddd;
+      border-radius: 4px 0 0 4px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .search-input:focus {
+      border-color: #d9534f;
+    }
+
+    .search-button {
+      padding: 10px 20px;
+      background-color: #d9534f;
+      color: #fff;
+      border: none;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .search-button:hover {
+      background-color: #d9534f;
+    }
+
+    .search-close {
+      margin-right: -40px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
   <div class="site-wrap">
-    
+
 
     <div class="site-navbar bg-white py-2">
 
       <div class="search-wrap">
         <div class="container">
           <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
-          <form action="#" method="post">
-            <input type="text" class="form-control" placeholder="Search keyword and hit enter...">
-          </form>  
+          <form action="/user/shop" method="GET" class="search-form">
+            <input type="text" name="q" class="search-input" placeholder="Search products..."
+              value="<%= typeof q !== 'undefined' ? q : '' %>">
+            <button type="submit" class="search-button">Search</button>
+          </form>
         </div>
       </div>
 
@@ -46,39 +102,24 @@
           <div class="main-nav d-none d-lg-block">
             <nav class="site-navigation text-right text-md-center" role="navigation">
               <ul class="site-menu js-clone-nav d-none d-lg-block">
-                <li class="has-children active">
+                <li class="active">
                   <a href="/user/index">Home</a>
-                  <ul class="dropdown">
-                    <li><a href="#">Menu One</a></li>
-                    <li><a href="#">Menu Two</a></li>
-                    <li><a href="#">Menu Three</a></li>
-                    <li class="has-children">
-                      <a href="#">Sub Menu</a>
-                      <ul class="dropdown">
-                        <li><a href="#">Menu One</a></li>
-                        <li><a href="#">Menu Two</a></li>
-                        <li><a href="#">Menu Three</a></li>
-                      </ul>
-                    </li>
-                  </ul>
                 </li>
-                
                 <li><a href="/user/shop">Shop</a></li>
-                <li><a href="#">Catalogue</a></li>
-                <li><a href="#">New Arrivals</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                
               </ul>
             </nav>
           </div>
           <div class="icons">
             <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
             <a href="/user/user-profile" class="icons-btn d-inline-block"><span class="icon-user"></span></a>
-            <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
+            <a href="/user/wishlist" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
             <a href="/user/cart" class="icons-btn d-inline-block bag">
               <span class="icon-shopping-bag"></span>
               <!-- <span class="number">2</span> -->
             </a>
-            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span class="icon-menu"></span></a>
+            <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
+                class="icon-menu"></span></a>
           </div>
         </div>
       </div>
@@ -89,9 +130,9 @@
         <div class="row">
           <div class="col-md-6 ml-auto order-md-2 align-self-start">
             <div class="site-block-cover-content">
-            <h2 class="sub-title">#New Summer Collection 2019</h2>
-            <h1>Arrivals Sales</h1>
-            <p><a href="/user/shop" class="btn btn-black rounded-0">Shop Now</a></p>
+              <h2 class="sub-title">#New Summer Collection 2024</h2>
+              <h1>Arrivals Sales</h1>
+              <p><a href="/user/shop" class="btn btn-black rounded-0">Shop Now</a></p>
             </div>
           </div>
           <div class="col-md-6 order-1 align-self-end">
@@ -109,213 +150,20 @@
         <div class="row align-items-stretch">
           <div class="col-lg-8">
             <div class="product-item sm-height full-height bg-gray">
-              <a href="#" class="product-category">Women <span>25 items</span></a>
+              <a href="/user/shop?category=Womens+Collection" class="product-category">Women </a>
               <img src="/user/images/model_4.png" alt="Image" class="img-fluid">
             </div>
           </div>
           <div class="col-lg-4">
             <div class="product-item sm-height bg-gray mb-4">
-              <a href="#" class="product-category">Men <span>25 items</span></a>
+              <a href="/user/shop?category=Mens+Collection" class="product-category">Men </a>
               <img src="/user/images/model_5.png" alt="Image" class="img-fluid">
             </div>
 
             <div class="product-item sm-height bg-gray">
-              <a href="#" class="product-category">Shoes <span>25 items</span></a>
+              <a href="/user/shop?category=Shoes" class="product-category">Shoes </a>
               <img src="/user/images/model_6.png" alt="Image" class="img-fluid">
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    
-    <div class="site-section">
-      <div class="container">
-        <div class="row">
-          <div class="title-section mb-5 col-12">
-            <h2 class="text-uppercase">Popular Products</h2>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-4 col-md-6 item-entry mb-4">
-            <a href="#" class="product-item md-height bg-gray d-block">
-              <img src="/user/images/prod_2.png" alt="Image" class="img-fluid zoom-image" data-zoom-image="/user/images/prod_2.png" >
-            </a>
-            <h2 class="item-title"><a href="#">Gray Shoe</a></h2>
-            <strong class="item-price">$20.00</strong>
-          </div>
-          <div class="col-lg-4 col-md-6 item-entry mb-4">
-            <a href="#" class="product-item md-height bg-gray d-block">
-              <img src="/user/images/prod_3.png" alt="Image" class="img-fluid">
-            </a>
-            <h2 class="item-title"><a href="#">Blue Shoe High Heels</a></h2>
-            <strong class="item-price"><del>$46.00</del> $28.00</strong>
-          </div>
-
-          <div class="col-lg-4 col-md-6 item-entry mb-4">
-            <a href="#" class="product-item md-height bg-gray d-block">
-              <img src="/user/images/model_5.png" alt="Image" class="img-fluid">
-            </a>
-            <h2 class="item-title"><a href="#">Denim Jacket</a></h2>
-            <strong class="item-price"><del>$46.00</del> $28.00</strong>
-
-            <div class="star-rating">
-              <span class="icon-star2 text-warning"></span>
-              <span class="icon-star2 text-warning"></span>
-              <span class="icon-star2 text-warning"></span>
-              <span class="icon-star2 text-warning"></span>
-              <span class="icon-star2 text-warning"></span>
-            </div>
-
-          </div>
-          <div class="col-lg-4 col-md-6 item-entry mb-4">
-            <a href="#" class="product-item md-height bg-gray d-block">
-              <img src="/user/images/prod_1.png" alt="Image" class="img-fluid">
-            </a>
-            <h2 class="item-title"><a href="#">Leather Green Bag</a></h2>
-            <strong class="item-price"><del>$46.00</del> $28.00</strong>
-            <div class="star-rating">
-              <span class="icon-star2 text-warning"></span>
-              <span class="icon-star2 text-warning"></span>
-              <span class="icon-star2 text-warning"></span>
-              <span class="icon-star2 text-warning"></span>
-              <span class="icon-star2 text-warning"></span>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 item-entry mb-4">
-            <a href="#" class="product-item md-height bg-gray d-block">
-              <img src="/user/images/model_1.png" alt="Image" class="img-fluid">
-            </a>
-            <h2 class="item-title"><a href="#">Smooth Cloth</a></h2>
-            <strong class="item-price"><del>$46.00</del> $28.00</strong>
-          </div>
-          <div class="col-lg-4 col-md-6 item-entry mb-4">
-            <a href="#" class="product-item md-height bg-gray d-block">
-              <img src="/user/images/model_7.png" alt="Image" class="img-fluid">
-            </a>
-            <h2 class="item-title"><a href="#">Yellow Jacket</a></h2>
-            <strong class="item-price">$58.00</strong>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="site-section">
-      <div class="container">
-        <div class="row">
-          <div class="title-section text-center mb-5 col-12">
-            <h2 class="text-uppercase">Most Rated</h2>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 block-3">
-            <div class="nonloop-block-3 owl-carousel">
-              <div class="item">
-                <div class="item-entry">
-                  <a href="#" class="product-item md-height bg-gray d-block">
-                    <img src="/user/images/model_1.png" alt="Image" class="img-fluid">
-                  </a>
-                  <h2 class="item-title"><a href="#">Smooth Cloth</a></h2>
-                  <strong class="item-price"><del>$46.00</del> $28.00</strong>
-                  <div class="star-rating">
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-entry">
-                  <a href="#" class="product-item md-height bg-gray d-block">
-                    <img src="/user/images/prod_3.png" alt="Image" class="img-fluid">
-                  </a>
-                  <h2 class="item-title"><a href="#">Blue Shoe High Heels</a></h2>
-                  <strong class="item-price"><del>$46.00</del> $28.00</strong>
-
-                  <div class="star-rating">
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-entry">
-                  <a href="#" class="product-item md-height bg-gray d-block">
-                    <img src="/user/images/model_5.png" alt="Image" class="img-fluid">
-                  </a>
-                  <h2 class="item-title"><a href="#">Denim Jacket</a></h2>
-                  <strong class="item-price"><del>$46.00</del> $28.00</strong>
-
-                  <div class="star-rating">
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                  </div>
-
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-entry">
-                  <a href="#" class="product-item md-height bg-gray d-block">
-                    <img src="/user/images/prod_1.png" alt="Image" class="img-fluid" data-zoom-image="/user/images/prod_1.png">
-                  </a>
-                  <h2 class="item-title"><a href="#">Leather Green Bag</a></h2>
-                  <strong class="item-price"><del>$46.00</del> $28.00</strong>
-                  <div class="star-rating">
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-entry">
-                  <a href="#" class="product-item md-height bg-gray d-block">
-                    <img src="/user/images/model_7.png" alt="Image" class="img-fluid">
-                  </a>
-                  <h2 class="item-title"><a href="#">Yellow Jacket</a></h2>
-                  <strong class="item-price">$58.00</strong>
-                  <div class="star-rating">
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                    <span class="icon-star2 text-warning"></span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <div class="site-blocks-cover inner-page py-5" data-aos="fade">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 ml-auto order-md-2 align-self-start">
-            <div class="site-block-cover-content">
-            <h2 class="sub-title">#New Summer Collection 2019</h2>
-            <h1>New Shoes</h1>
-            <p><a href="/user/shop" class="btn btn-black rounded-0">Shop Now</a></p>
-            </div>
-          </div>
-          <div class="col-md-6 order-1 align-self-end">
-            <img src="/user/images/model_6.png" alt="Image" class="img-fluid" >
           </div>
         </div>
       </div>
@@ -329,50 +177,51 @@
             <a href="#" class="block-6">
               <img src="/user/images/about_1.jpg" alt="Image placeholder" class="img-fluid rounded mb-4">
               <h3 class="font-weight-light  mb-0">Finding Your Perfect Shirts This Summer</h3>
-              <p>Promo from  July 15 &mdash; 25, 2019</p>
+              <p>Promo from July 15 &mdash; 25, 2024</p>
             </a>
           </div>
+          
           <div class="col-lg-5 ml-auto mb-5 mb-lg-0">
             <div class="row">
               <div class="col-md-12">
-                <h3 class="footer-heading mb-4">Quick Links</h3>
+                <h3 class="footer-heading mb-4">About Us</h3>
               </div>
               <div class="col-md-6 col-lg-4">
                 <ul class="list-unstyled">
-                  <li><a href="#">Sell online</a></li>
-                  <li><a href="#">Features</a></li>
-                  <li><a href="#">Shopping cart</a></li>
-                  <li><a href="#">Store builder</a></li>
+                  <li>Curated products only</li>
+                  <li>Imported materials and products available</li>
+                  <li>Unique styles</li>
+                  <li>Direct from factory</li>
                 </ul>
               </div>
               <div class="col-md-6 col-lg-4">
                 <ul class="list-unstyled">
-                  <li><a href="#">Mobile commerce</a></li>
-                  <li><a href="#">Dropshipping</a></li>
-                  <li><a href="#">Website development</a></li>
+                  <li>No middle agents</li>
+                  <li>Delivery available</a></li>
+                  <li>Hassle free purchase</li>
                 </ul>
               </div>
               <div class="col-md-6 col-lg-4">
                 <ul class="list-unstyled">
-                  <li><a href="#">Point of sale</a></li>
-                  <li><a href="#">Hardware</a></li>
-                  <li><a href="#">Software</a></li>
+                  <li>Net banking available</li>
+                  <li>COD below Rs.1000/-</li>
+                  <li>Wallet option available</li>
                 </ul>
               </div>
             </div>
           </div>
-          
+
           <div class="col-md-6 col-lg-3">
             <div class="block-5 mb-5">
               <h3 class="footer-heading mb-4">Contact Info</h3>
               <ul class="list-unstyled">
-                <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
-                <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
-                <li class="email">emailaddress@domain.com</li>
+                <li class="address">Adith Ramesh, Kenegri Satelite Town, Bangalore, Karnataka, India</li>
+                <li class="phone">+91 9895905068</li>
+                <li class="email">adithramesh90@gmail.com</li>
               </ul>
             </div>
 
-            <div class="block-7">
+            <!-- <div class="block-7">
               <form action="#" method="post">
                 <label for="email_subscribe" class="footer-heading">Subscribe</label>
                 <div class="form-group">
@@ -380,18 +229,21 @@
                   <input type="submit" class="btn btn-sm btn-primary" value="Send">
                 </div>
               </form>
-            </div>
+            </div> -->
           </div>
         </div>
         <div class="row pt-5 mt-5 text-center">
           <div class="col-md-12">
             <p>
-            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" class="text-primary">Colorlib</a>
-            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+              Copyright &copy;
+              <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
+              with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank"
+                class="text-primary">Colorlib</a>
+              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
             </p>
           </div>
-          
+
         </div>
       </div>
     </footer>
@@ -411,7 +263,7 @@
   <script src="/user/js/jquery-3.3.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/2.2.3/jquery.elevatezoom.min.js"></script>
   <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
       $('.zoom-image').elevateZoom({
         zoomType: "inner",
         cursor: "crosshair",
@@ -419,5 +271,6 @@
       });
     });
   </script>
-  </body>
+</body>
+
 </html>

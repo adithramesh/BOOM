@@ -30,6 +30,56 @@
             max-width: 100%; /* Ensure images are responsive */
             height: auto; /* Maintain aspect ratio */
         }
+        .search-wrap {
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .search-wrap .container {
+      display: flex;
+      align-items: center;
+    }
+
+    .search-form {
+      display: flex;
+      width: 100%;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 10px 15px;
+      border: 2px solid #ddd;
+      border-radius: 4px 0 0 4px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .search-input:focus {
+      border-color: #d9534f;
+    }
+
+    .search-button {
+      padding: 10px 20px;
+      background-color: #d9534f;
+      color: #fff;
+      border: none;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .search-button:hover {
+      background-color: #d9534f;
+    }
+
+    .search-close {
+      margin-right: -40px;
+      cursor: pointer;
+    }
     </style>
     
 </head>
@@ -42,12 +92,14 @@
 
         <div class="search-wrap">
             <div class="container">
-                <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
-                <form action="#" method="post">
-                    <input type="text" class="form-control" placeholder="Search keyword and hit enter...">
-                </form>  
+              <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
+              <form action="/user/shop" method="GET" class="search-form">
+                <input type="text" name="q" class="search-input" placeholder="Search products..."
+                  value="<%= typeof q !== 'undefined' ? q : '' %>">
+                <button type="submit" class="search-button">Search</button>
+              </form>
             </div>
-        </div>
+          </div>
 
         <div class="container">
             <div class="d-flex align-items-center justify-content-between">
@@ -59,33 +111,18 @@
                 <div class="main-nav d-none d-lg-block">
                     <nav class="site-navigation text-right text-md-center" role="navigation">
                         <ul class="site-menu js-clone-nav d-none d-lg-block">
-                            <li class="has-children active">
+                            <li class="active">
                                 <a href="/user/index">Home</a>
-                                <ul class="dropdown">
-                                    <li><a href="#">Menu One</a></li>
-                                    <li><a href="#">Menu Two</a></li>
-                                    <li><a href="#">Menu Three</a></li>
-                                    <li class="has-children">
-                                        <a href="#">Sub Menu</a>
-                                        <ul class="dropdown">
-                                            <li><a href="#">Menu One</a></li>
-                                            <li><a href="#">Menu Two</a></li>
-                                            <li><a href="#">Menu Three</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
+                              </li>
                             <li><a href="/user/shop">Shop</a></li>
-                            <li><a href="#">Catalogue</a></li>
-                            <li><a href="#">New Arrivals</a></li>
-                            <li><a href="contact.html">Contact</a></li>
+                            
                         </ul>
                     </nav>
                 </div>
                 <div class="icons">
                     <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
                     <a href="/user/user-profile" class="icons-btn d-inline-block"><span class="icon-user"></span></a>
-                    <a href="#" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
+                    <a href="/user/wishlist" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
                     <a href="/user/cart" class="icons-btn d-inline-block bag">
                         <span class="icon-shopping-bag"></span>
                         <!-- <span class="number">2</span> -->
@@ -164,7 +201,7 @@
                 <% if (productDetails.sizes.length > 0)  { %>
                 <p>
                     <button onclick="addToCart('<%= productDetails._id %>')" class="btn btn-sm height-auto px-4 py-3 btn-primary">Add To Cart</button>
-                    <a href="/user/Wishlist" class="btn btn-sm height-auto px-4 py-3 btn-outline-primary">Add To Wishlist</a>
+                    <button onclick="addToWishlist('<%= productDetails._id %>')" class="btn btn-sm height-auto px-4 py-3 btn-outline-primary">Add To Wishlist</button>
                     <a href="/user/cart" class="btn btn-sm height-auto px-4 py-3 btn-primary">View Cart</a>  
                 </p>
                 <% } %>
@@ -192,58 +229,49 @@
                     <a href="#" class="block-6">
                         <img src="/user/images/about_1.jpg" alt="Image placeholder" class="img-fluid rounded mb-4">
                         <h3 class="font-weight-light  mb-0">Finding Your Perfect Shirts This Summer</h3>
-                        <p>Promo from  July 15 &mdash; 25, 2019</p>
+                        <p>Promo from  July 15 &mdash; 25, 2024</p>
                     </a>
                 </div>
                 <div class="col-lg-5 ml-auto mb-5 mb-lg-0">
                     <div class="row">
-                        <div class="col-md-12">
-                            <h3 class="footer-heading mb-4">Quick Links</h3>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <ul class="list-unstyled">
-                                <li><a href="#">Sell online</a></li>
-                                <li><a href="#">Features</a></li>
-                                <li><a href="#">Shopping cart</a></li>
-                                <li><a href="#">Store builder</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <ul class="list-unstyled">
-                                <li><a href="#">Mobile commerce</a></li>
-                                <li><a href="#">Dropshipping</a></li>
-                                <li><a href="#">Website development</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <ul class="list-unstyled">
-                                <li><a href="#">Point of sale</a></li>
-                                <li><a href="#">Hardware</a></li>
-                                <li><a href="#">Software</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-3">
-                    <div class="block-5 mb-5">
-                        <h3 class="footer-heading mb-4">Contact Info</h3>
+                      <div class="col-md-12">
+                        <h3 class="footer-heading mb-4">About Us</h3>
+                      </div>
+                      <div class="col-md-6 col-lg-4">
                         <ul class="list-unstyled">
-                            <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
-                            <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
-                            <li class="email">emailaddress@domain.com</li>
+                          <li>Curated products only</li>
+                          <li>Imported materials and products available</li>
+                          <li>Unique styles</li>
+                          <li>Direct from factory</li>
                         </ul>
+                      </div>
+                      <div class="col-md-6 col-lg-4">
+                        <ul class="list-unstyled">
+                          <li>No middle agents</li>
+                          <li>Delivery available</a></li>
+                          <li>Hassle free purchase</li>
+                        </ul>
+                      </div>
+                      <div class="col-md-6 col-lg-4">
+                        <ul class="list-unstyled">
+                          <li>Net banking available</li>
+                          <li>COD below Rs.1000/-</li>
+                          <li>Wallet option available</li>
+                        </ul>
+                      </div>
                     </div>
-
-                    <div class="block-7">
-                        <form action="#" method="post">
-                            <label for="email_subscribe" class="footer-heading">Subscribe</label>
-                            <div class="form-group">
-                                <input type="text" class="form-control py-4" id="email_subscribe" placeholder="Email">
-                                <input type="submit" class="btn btn-sm btn-primary" value="Send">
-                            </div>
-                        </form>
+                  </div>
+          
+                  <div class="col-md-6 col-lg-3">
+                    <div class="block-5 mb-5">
+                      <h3 class="footer-heading mb-4">Contact Info</h3>
+                      <ul class="list-unstyled">
+                        <li class="address">Adith Ramesh. Kengeri Satelite Town, Bangalore, Karnataka, India</li>
+                        <li class="phone">+91 9895905068</li>
+                        <li class="email">adithramesh90@gmail.com</li>
+                      </ul>
                     </div>
+          
                 </div>
             </div>
             <div class="row pt-5 mt-5 text-center">
@@ -315,25 +343,28 @@
             });
         });
     }
+
+    async function addToWishlist(productId) {
+    const size = document.querySelector('input[name="size"]:checked').value;
+    const response = await fetch('/user/add-wishlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId, size })
+    });
+
+    if (response.ok) {
+        Swal.fire('Success', 'Product added to wishlist', 'success');
+    } else {
+        const data = await response.json();
+        console.error('Failed to add product to wishlist:', data.message);
+        Swal.fire('Error', data.message || 'Failed to add product to wishlist', 'error');
+    }
+}
+
 </script>
 
- <!-- Include jQuery and ElevateZoom library -->
- <!-- <script src="/user/js/jquery-3.3.1.min.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/2.2.3/jquery.elevatezoom.min.js"></script>
- <script>
-  $(document).ready(function() {
-    $('.zoom-image').elevateZoom({
-        zoomType: "inner",
-        cursor: "crosshair",
-        gallery: 'imageCarousel', // ID of the carousel
-        galleryActiveClass: 'active', // Class applied to the active carousel item
-        imageCrossfade: true, // Smooth transition between images
-        loadingIcon: '/path/to/loading.gif', // Customize loading icon
-        scrollZoom: false, // Disable zoom on mouse scroll
-        responsive: true // Make the zoom responsive
-    });
-});
- </script> -->
  <script type="text/javascript">
     MagicZoom.options = {
         'zoomMode': 'zoom',

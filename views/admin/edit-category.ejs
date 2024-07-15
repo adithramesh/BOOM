@@ -63,8 +63,7 @@
                 <h2 class="content-title card-title">Edit Category</h2>
             </div>
             <div class="content-body">
-                <form action="/admin/edit-category/<%= category._id %>" method="POST">
-                    
+                <form action="/admin/edit-category/<%= category._id %>" method="POST" id="categoryForm">
                     <div class="form-group">
                         <label for="name">Name:</label>
                         <input type="text" id="name" name="name" class="form-control" value="<%= category.name %>" required>
@@ -73,11 +72,41 @@
                         <label for="description">Description:</label>
                         <textarea id="description" name="description" class="form-control" required><%= category.description %></textarea>
                     </div>
-                    <!-- Add more input fields as needed for other category details -->
+                    <!-- Add Discount Percentage Field -->
+                    <div class="form-group">
+                        <label for="discountPercentage">Discount Percentage:</label>
+                        <input type="number" name="discountPercentage" id="discountPercentage" class="form-control" min="0" max="90" value="<%= category.discountPercentage || 0 %>">
+                    </div>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
             </div>
         </section>
+        
     </main>
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('categoryForm');
+        const nameInput = document.getElementById('name');
+        const descriptionInput = document.getElementById('description');
+
+        form.addEventListener('submit', function (event) {
+            const spacesRegex = /^\s*$/;
+
+            if (spacesRegex.test(nameInput.value)) {
+                alert('Category Name cannot be empty or just spaces.');
+                event.preventDefault(); // Prevent form submission
+                return;
+            }
+
+            if (spacesRegex.test(descriptionInput.value)) {
+                alert('Category Description cannot be empty or just spaces.');
+                event.preventDefault(); // Prevent form submission
+                return;
+            }
+        });
+    });
+</script>
+
 </html>

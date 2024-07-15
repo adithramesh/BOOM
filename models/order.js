@@ -52,6 +52,17 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    discount:{
+        type: Number,
+        required: true,
+        default: 0,
+    },
+    deliveryCharge:{
+        type: Number,
+        required: true,
+        default: 150,
+    },
+    
     paymentOption: {
         type: String, // Changed to String to be more descriptive
         required: true
@@ -59,7 +70,21 @@ const orderSchema = new mongoose.Schema({
     isBlocked:{
         type:Boolean,
         default:false
-    }
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['Pending', 'Success', 'Failure'],
+        default: 'Pending', // 'Pending', 'Success', 'Failure'
+        required: true
+      },
+      razorpayPaymentId: {
+        type: String,
+        default: null // or required based on your logic
+    },
+    razorpayOrderId: {
+        type: String,
+        default: null // or required based on your logic
+    },
 }, {
     timestamps: true
 });

@@ -4,12 +4,17 @@ exports.isAuth = (req, res, next) => {
   try {
     if (!req.session.isAuth) {
       res.redirect("/user/login");
-    }
+    } else{
+      next();
+  }
   } catch (err) {
     console.error("Error in admin session", err);
     res.redirect("/user/login");
   }
 };
+
+
+
 
 exports.isNotAuth = (req, res, next) => {
   try {
@@ -110,5 +115,13 @@ console.log("user:",user);
     req.flash("error", "An error occurred");
     res.redirect("/user/login");
   }
+};
+
+exports.noCache = (req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    res.set('Surrogate-Control', 'no-store');
+  next();
 };
 

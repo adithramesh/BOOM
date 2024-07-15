@@ -40,6 +40,23 @@ const userSchema=new mongoose.Schema({
     isBlocked:{
         type:Boolean,
         default:false
+    },
+    wishlist: [
+        {
+            product: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product'
+            },
+            size: {
+                type: String,
+                required: true
+            }
+        }
+    ],
+    referralCode: {
+        type: String,
+        unique: true,
+        required: false
     }
 })
 

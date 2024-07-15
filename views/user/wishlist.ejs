@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>BOOM &mdash; Wishlist</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700" />
+  <link rel="stylesheet" href="fonts/icomoon/style.css" />
+  <link rel="stylesheet" href="/user/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/user/css/magnific-popup.css" />
+  <link rel="stylesheet" href="/user/css/jquery-ui.css" />
+  <link rel="stylesheet" href="/user/css/owl.carousel.min.css" />
+  <link rel="stylesheet" href="/user/css/owl.theme.default.min.css" />
+  <link rel="stylesheet" href="/user/css/aos.css" />
+  <link rel="stylesheet" href="/user/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+</head>
+<style>
+  .search-wrap {
+  background-color: #f1f1f1;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.search-wrap .container {
+  display: flex;
+  align-items: center;
+}
+
+.search-form {
+  display: flex;
+  width: 100%;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 2px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  border-color: #d9534f;
+}
+
+.search-button {
+  padding: 10px 20px;
+  background-color: #d9534f;
+  color: #fff;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.search-button:hover {
+  background-color: #d9534f;
+}
+
+.search-close {
+  margin-right: -40px;
+  cursor: pointer;
+}
+
+</style>
+<body>
+  <div class="site-wrap">
+    <div class="site-navbar bg-white py-2">
+
+      <div class="search-wrap">
+        <div class="container">
+          <a href="#" class="search-close js-search-close"><span class="icon-close2"></span></a>
+          <form action="/user/shop" method="GET" class="search-form">
+            <input type="text" name="q" class="search-input" placeholder="Search products..." value="<%= typeof q !== 'undefined' ? q : '' %>">
+            <button type="submit" class="search-button">Search</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="logo">
+            <div class="site-logo">
+              <a href="/user/index" class="js-logo-clone">BOOM</a>
+            </div>
+          </div>
+          <div class="main-nav d-none d-lg-block">
+            <nav class="site-navigation text-right text-md-center" role="navigation">
+              <ul class="site-menu js-clone-nav d-none d-lg-block">
+                <li><a href="/user/index">Home</a></li>
+                <li class="active"><a href="/user/shop">Shop</a></li>
+              
+              </ul>
+            </nav>
+          </div>
+          <div class="icons">
+            <a href="#" class="icons-btn d-inline-block js-search-open"><span class="icon-search"></span></a>
+            <a href="/user/user-profile" class="icons-btn d-inline-block"><span class="icon-user"></span></a>
+            <a href="/user/wishlist" class="icons-btn d-inline-block"><span class="icon-heart-o"></span></a>
+            <a href="/user/cart" class="icons-btn d-inline-block bag"><span class="icon-shopping-bag"></span>
+
+              <a href="#" class="site-menu-toggle js-menu-toggle ml-3 d-inline-block d-lg-none"><span
+                  class="icon-menu"></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breadcrumbs -->
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0">
+            <a href="/user/index">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Wishlist</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-5">
+      <h2>Wishlist</h2>
+      <div class="row mt-3">
+        <% if (wishlist.length> 0) { %>
+          <% wishlist.forEach(item=> { %> <!-- Use item to iterate through wishlist -->
+            <div class="col-md-4 mb-4">
+              <div class="card">
+                <img src="<%= item.product.images[0] %>" class="card-img-top" alt="...">
+                <!-- Access images from item.product -->
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <%= item.product.name %>
+                  </h5> <!-- Access name from item.product -->
+                  <p class="card-text">
+                    <%= item.product.description %>
+                  </p> <!-- Access description from item.product -->
+                  <p>Size: <%= item.size %>
+                  </p> <!-- Access size directly from item -->
+                  <p>Price: ₹<%= item.product.price.toFixed(2) %>
+                  </p> <!-- Access price from item.product -->
+                  <button onclick="addToCart('<%= item.product._id %>', '<%= item.size %>')"
+                    class="btn btn-primary btn-sm">Add To Cart</button>
+                  <button onclick="removeFromWishlist('<%= item.product._id %>', '<%= item.size %>')"
+                    class="btn btn-outline-danger btn-sm">Remove from Wishlist</button>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+              <% } else { %>
+                <div class="col-md-12">
+                  <p>Your wishlist is empty.</p>
+                </div>
+                <% } %>
+
+      </div>
+    </div>
+    <!-- Optional Footer -->
+    <footer class="site-footer custom-border-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 col-lg-3 mb-4 mb-lg-0">
+            <h3 class="footer-heading mb-4">Promo</h3>
+            <a href="#" class="block-6">
+              <img src="/user/images/about_1.jpg" alt="Image placeholder" class="img-fluid rounded mb-4">
+              <h3 class="font-weight-light  mb-0">Finding Your Perfect Shirts This Summer</h3>
+              <p>Promo from July 15 &mdash; 25, 2024</p>
+            </a>
+          </div>
+         
+          <div class="col-lg-5 ml-auto mb-5 mb-lg-0">
+            <div class="row">
+              <div class="col-md-12">
+                <h3 class="footer-heading mb-4">About Us</h3>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li>Curated products only</li>
+                  <li>Imported materials and products available</li>
+                  <li>Unique styles</li>
+                  <li>Direct from factory</li>
+                </ul>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li>No middle agents</li>
+                  <li>Delivery available</a></li>
+                  <li>Hassle free purchase</li>
+                </ul>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                <ul class="list-unstyled">
+                  <li>Net banking available</li>
+                  <li>COD below Rs.1000/-</li>
+                  <li>Wallet option available</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="block-5 mb-5">
+              <h3 class="footer-heading mb-4">Contact Info</h3>
+              <ul class="list-unstyled">
+                <li class="address">Adith Ramesh, Kengeri Satelite Town, Bangalaore, Karnataka, India</li>
+                <li class="phone">+91 9895905068</li>
+                <li class="email">adithramesh90@gmail.com</li>
+              </ul>
+            </div>
+
+            <div class="block-7">
+              <form action="#" method="post">
+                <label for="email_subscribe" class="footer-heading">Subscribe</label>
+                <div class="form-group">
+                  <input type="text" class="form-control py-4" id="email_subscribe" placeholder="Email">
+                  <input type="submit" class="btn btn-sm btn-primary" value="Send">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-5 mt-5 text-center">
+          <div class="col-md-12">
+            <p>
+              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+              &copy;
+              <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
+              with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank"
+                class="text-primary">Colorlib</a>
+              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/user/js/jquery-3.3.1.min.js"></script>
+  <script src="/user/js/jquery-ui.js"></script>
+  <script src="/user/js/popper.min.js"></script>
+  <script src="/user/js/bootstrap.min.js"></script>
+  <script src="/user/js/owl.carousel.min.js"></script>
+  <script src="/user/js/jquery.magnific-popup.min.js"></script>
+  <script src="/user/js/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="/user/js/main.js"></script>
+
+  <script>
+
+    async function addToCart(productId, size) {
+      const response = await fetch('/user/add-cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId, size })
+      });
+
+      if (response.ok) {
+        removeFromWishlist(productId, size);
+      } else {
+        console.error('Failed to add to cart');
+        Swal.fire('Error', 'Failed to add to cart', 'error');
+      }
+    }
+
+    async function removeFromWishlist(productId, size) {
+      const response = await fetch('/user/remove-wishlist', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId, size })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        location.reload();
+      } else {
+        console.error('Failed to remove from wishlist:', data.message);
+        Swal.fire('Error', data.message || 'Failed to remove from wishlist', 'error');
+      }
+    }
+
+  </script>
+</body>
+
+</html>

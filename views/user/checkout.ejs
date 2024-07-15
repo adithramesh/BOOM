@@ -91,27 +91,11 @@
                     <div class="main-nav d-none d-lg-block">
                         <nav class="site-navigation text-right text-md-center" role="navigation">
                             <ul class="site-menu js-clone-nav d-none d-lg-block">
-                                <li class="has-children active">
+                                <li class="active">
                                     <a href="/user/index">Home</a>
-                                    <ul class="dropdown">
-                                        <li><a href="#">Menu One</a></li>
-                                        <li><a href="#">Menu Two</a></li>
-                                        <li><a href="#">Menu Three</a></li>
-                                        <li class="has-children">
-                                            <a href="#">Sub Menu</a>
-                                            <ul class="dropdown">
-                                                <li><a href="#">Menu One</a></li>
-                                                <li><a href="#">Menu Two</a></li>
-                                                <li><a href="#">Menu Three</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
+                                  </li>
                                 <li><a href="/user/shop">Shop</a></li>
-                                <li><a href="#">Catalogue</a></li>
-                                <li><a href="#">New Arrivals</a></li>
-                                <li><a href="contact.html">Contact</a></li>
-                            </ul>
+                               
                         </nav>
                     </div>
                     <div class="icons">
@@ -211,57 +195,72 @@
             </form>
         </div>
 
-  <!-- Cart Details Column -->
-  <div class="col-md-6">
+<!-- Cart Details Column -->
+<div class="col-md-6">
     <div class="cart-details">
-        <h2>Your order</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% cart.items.forEach(item => { %>
-                    <tr>
-                        <td><%= item.name %></td>
-                        <td><%= item.quantity %></td>
-                        <td>₹<%= item.price %></td>
-                        <td>₹<%= item.quantity * item.price %></td>
-                    </tr>
-                <% }); %>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="3"><strong>Total</strong></td>
-                    <td><strong>₹<%= cart.totalPrice %></strong></td>
-                </tr>
-            </tfoot>
-        </table>
+      <h2>Your order</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% cart.items.forEach(item => { %>
+            <tr>
+              <td><%= item.name %></td>
+              <td><%= item.quantity %></td>
+              <td>₹<%= item.price %></td>
+              <td>₹<%= item.quantity * item.price %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"><strong>Subtotal</strong></td>
+            <td id="subtotal"><strong>₹<%= cart.subTotal.toFixed(2) %></strong></td>
+          </tr>
+          <tr>
+            <td colspan="3"><strong>Discount</strong></td>
+            <td id="discount"><strong>₹<%= cart.discount.toFixed(2) %></strong></td>
+          </tr>
+          <tr>
+            <td colspan="3"><strong>Delivery Charge</strong></td>
+            <td id="discount"><strong>₹<%= cart.deliveryCharge.toFixed(2) %></strong></td>
+          </tr>
+          <tr>
+            <td colspan="3"><strong>Total</strong></td>
+            <td id="total"><strong>₹<%= (cart.totalPrice + cart.deliveryCharge).toFixed(2) %></strong></td>
+          </tr>
+        </tfoot>
+      </table>
     </div>
-</div>
-</div>
+  </div>
+  </div>
+  
             <!-- Combined Address Selection and Payment Options Form -->
             <div class="row">
                 <div class="col-md-6">
             <h2>Payment Options</h2>
-            <form action="/user/orders/status" method="POST" onsubmit="return validateForm()">
-                <input type="hidden" name="selectedAddressId" id="selectedAddressId" required>
-                <!-- Payment options -->
-                <div class="form-group payment-option">
-                    <input type="radio" name="paymentMethod" value="COD" required> Cash on Delivery (COD)
-                </div>
-                <div class="form-group payment-option">
-                    <input type="radio" name="paymentMethod" value="UPI" required> UPI
-                </div>
-                <div class="form-group payment-option">
-                    <input type="radio" name="paymentMethod" value="Net Banking" required> Net Banking
-                </div>
-                <button type="submit" class="btn btn-primary btn-lg btn-block">Place Order</button>
-            </form>
+
+    <form id="paymentForm" onsubmit="handlePaymentSubmit(event)">
+    
+        <input type="hidden" id="selectedAddressId" name="selectedAddressId">
+    <!-- Payment options -->
+    <div class="form-group payment-option">
+        <input type="radio" name="paymentMethod" value="COD" required> Cash on Delivery (COD)
+    </div>
+    <div class="form-group payment-option">
+        <input type="radio" name="paymentMethod" value="UPI" required> UPI
+    </div>
+    <div class="form-group payment-option">
+        <input type="radio" name="paymentMethod" value="wallet" required> Wallet
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg btn-block">Place Order</button>
+</form>
         </div>
     </div>
     </div>
@@ -278,7 +277,12 @@
     function validateForm() {
     const selectedAddressId = document.getElementById('selectedAddressId').value;
         if (!selectedAddressId) {
-            alert("Please select an address.");
+            swal.fire({
+                    title: 'Error!',
+                    text: 'Please select an address.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
             return false;
         }
         return true;
@@ -336,6 +340,7 @@
                 updateAddressInUI(savedAddress);
             } else {
                 addAddressToUI(savedAddress);
+                window.location.reload();
             }
             clearAddressForm();
             document.getElementById('addressForm').style.display = 'none';
@@ -458,8 +463,398 @@
             button.closest('.address-item').remove();
         }
     }
+
+
+// async function handlePaymentSubmit(event) {
+//     event.preventDefault();
+
+//     // Retrieve selected payment method and address ID
+//     const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+//     const selectedAddressInput = document.querySelector('input[name="selectedAddress"]:checked');
+
+//     if (!selectedAddressInput) {
+//         alert('Please select an address.');
+//         return;
+//     }
+
+//     const selectedAddressId = selectedAddressInput.value;
+//     const amt = document.getElementById("total").textContent.trim();
+//     const amount = parseFloat(amt.replace(/[^0-9.-]/g, ''));
+
+//     // Validate payment method and amount (if needed)
+//     if (selectedPaymentMethod === 'COD' && amount > 1000) {
+//         swal({
+//             title: "Payment Option Not Allowed",
+//             text: "Cash on Delivery (COD) option cannot be used for orders above Rs. 1000.",
+//             icon: "warning",
+//             button: "OK",
+//         });
+//         return;
+//     }
+
+//     if (selectedPaymentMethod === 'UPI') {
+//         try {
+//             // Create a Razorpay order
+//             const response = await fetch('/user/create-razorpay-order', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 },
+//                 body: JSON.stringify({ amount: amount * 100 }) // Convert to paise
+//             });
+
+//             if (!response.ok) {
+//                 throw new Error('Failed to create Razorpay order.');
+//             }
+
+//             // Retrieve order data from response
+//             const orderData = await response.json();
+
+//             // Configure Razorpay options for payment handling
+//             const options = {
+//                 key: 'rzp_test_qzAibN7X6K7MAx',
+//                 amount: orderData.order.amount,
+//                 currency: 'INR',
+//                 name: 'BOOM Apparel Shopping',
+//                 description: 'Order Payment',
+//                 order_id: orderData.order.id,
+//                 handler: async function (response) {
+//                     try {
+//                         // Construct payment details to send to server
+//                         const paymentDetails = {
+//                             selectedAddressId: selectedAddressId,
+//                             selectedPaymentMethod: selectedPaymentMethod,
+//                             razorpay_payment_id: response.razorpay_payment_id,
+//                             razorpay_order_id: response.razorpay_order_id,
+//                             razorpay_signature: response.razorpay_signature
+//                         };
+
+//                         // Send payment details to server for verification
+//                         const verificationResponse = await fetch('/user/orders/status', {
+//                             method: 'POST',
+//                             headers: {
+//                                 'Content-Type': 'application/json'
+//                             },
+//                             body: JSON.stringify(paymentDetails)
+//                         });
+
+//                         if (!verificationResponse.ok) {
+//                             throw new Error('Failed to verify payment.');
+//                         }
+
+//                         const data = await verificationResponse.json();
+
+//                         // Handle server response
+//                         if (data.success) {
+//                             // Redirect to thank you page on successful payment
+//                             window.location.href = '/user/thankyou';
+//                         } else {
+//                             // Display error and redirect to my orders page on payment failure
+//                             alert('Payment verification failed.');
+//                             window.location.href = '/user/my-orders';
+//                         }
+//                     } catch (error) {
+//                         console.error('Error processing payment:', error);
+//                         alert('Failed to process payment.');
+//                         window.location.href = '/user/orders/status'; // Redirect to orders page on failure
+//                     }
+//                 },
+//                 theme: {
+//                     color: '#3399cc'
+//                 },
+//                 modal: {
+//                     ondismiss: function () {
+//                         alert('Payment failed or was cancelled.');
+
+//                         // Create a form dynamically
+//                         const form = document.createElement('form');
+//                         form.method = 'POST';
+//                         form.action = '/user/orders/status'; // Your endpoint
+
+//                         // Create hidden input fields for payment details
+//                         const paymentDetails = {
+//                             selectedAddressId: selectedAddressId,
+//                             selectedPaymentMethod: selectedPaymentMethod,
+//                             razorpay_payment_id: '', // Empty because payment was not completed
+//                             razorpay_order_id: orderData.order.id,
+//                             razorpay_signature: ''
+//                         };
+
+//                         for (const key in paymentDetails) {
+//                             if (paymentDetails.hasOwnProperty(key)) {
+//                                 const hiddenField = document.createElement('input');
+//                                 hiddenField.type = 'hidden';
+//                                 hiddenField.name = key;
+//                                 hiddenField.value = paymentDetails[key];
+//                                 form.appendChild(hiddenField);
+//                             }
+//                         }
+
+//                         // Append the form to the body and submit
+//                         document.body.appendChild(form);
+//                         form.submit();
+//                     }
+//                 }
+//             };
+
+//             // Initialize Razorpay instance with options and open payment modal
+//             const rzp1 = new Razorpay(options);
+//             rzp1.open();
+
+//         } catch (error) {
+//             console.error('Error creating Razorpay order:', error);
+//             alert('Failed to create Razorpay order.');
+//         }
+//     } else if (selectedPaymentMethod === "COD") {
+//         const paymentDetails = {
+//             selectedAddressId: selectedAddressId,
+//             selectedPaymentMethod: selectedPaymentMethod
+//         };
+
+//         try {
+//             const response = await fetch('/user/orders/status', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 },
+//                 body: JSON.stringify(paymentDetails)
+//             });
+
+//             if (!response.ok) {
+//                 throw new Error('Failed to place order.');
+//             }
+
+//             const responseData = await response.json();
+
+//             if (responseData.success) {
+//                 window.location.href = '/user/thankyou';
+//             } else {
+//                 throw new Error('Failed to verify payment.');
+//             }
+
+//         } catch (error) {
+//             console.error('Error processing order:', error);
+//             alert('Failed to place order.');
+//         }
+//     }
+// }
+
+async function handlePaymentSubmit(event) {
+    event.preventDefault();
+
+    // Retrieve selected payment method and address ID
+    const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const selectedAddressInput = document.querySelector('input[name="selectedAddress"]:checked');
+
+    if (!selectedAddressInput) {
+        swal({
+                    title: 'Error!',
+                    text: 'Please select an address.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+        return;
+    }
+
+    const selectedAddressId = selectedAddressInput.value;
+    const amt = document.getElementById("total").textContent.trim();
+    const amount = parseFloat(amt.replace(/[^0-9.-]/g, ''));
+
+    // Validate payment method and amount (if needed)
+    if (selectedPaymentMethod === 'COD' && amount > 1000) {
+        swal({
+            title: "Payment Option Not Allowed",
+            text: "Cash on Delivery (COD) option cannot be used for orders above Rs. 1000.",
+            icon: "warning",
+            button: "OK",
+        });
+        return;
+    }
+
+    if (selectedPaymentMethod === 'UPI') {
+        try {
+            // Create a Razorpay order
+            const response = await fetch('/user/create-razorpay-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ amount: amount * 100 }) // Convert to paise
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create Razorpay order.');
+            }
+
+            // Retrieve order data from response
+            const orderData = await response.json();
+
+            // Configure Razorpay options for payment handling
+            const options = {
+                key: 'rzp_test_qzAibN7X6K7MAx',
+                amount: orderData.order.amount,
+                currency: 'INR',
+                name: 'BOOM Apparel Shopping',
+                description: 'Order Payment',
+                order_id: orderData.order.id,
+                handler: async function (response) {
+                    try {
+                        // Construct payment details to send to server
+                        const paymentDetails = {
+                            selectedAddressId: selectedAddressId,
+                            selectedPaymentMethod: selectedPaymentMethod,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature
+                        };
+
+                        // Send payment details to server for verification
+                        const verificationResponse = await fetch('/user/orders/status', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(paymentDetails)
+                        });
+
+                        if (!verificationResponse.ok) {
+                            throw new Error('Failed to verify payment.');
+                        }
+
+                        const data = await verificationResponse.json();
+
+                        // Handle server response
+                        if (data.success) {
+                            // Redirect to thank you page on successful payment
+                            window.location.href = '/user/thankyou';
+                        } else {
+                            // Display error and redirect to my orders page on payment failure
+                            alert('Payment verification failed.');
+                            window.location.href = '/user/my-orders';
+                        }
+                    } catch (error) {
+                        console.error('Error processing payment:', error);
+                        alert('Failed to process payment.');
+                        window.location.href = '/user/orders/status'; // Redirect to orders page on failure
+                    }
+                },
+                theme: {
+                    color: '#3399cc'
+                },
+                modal: {
+                    ondismiss: function () {
+                        alert('Payment failed or was cancelled.');
+
+                        // Create a form dynamically
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/user/orders/status'; // Your endpoint
+
+                        // Create hidden input fields for payment details
+                        const paymentDetails = {
+                            selectedAddressId: selectedAddressId,
+                            selectedPaymentMethod: selectedPaymentMethod,
+                            razorpay_payment_id: '', // Empty because payment was not completed
+                            razorpay_order_id: orderData.order.id,
+                            razorpay_signature: ''
+                        };
+
+                        for (const key in paymentDetails) {
+                            if (paymentDetails.hasOwnProperty(key)) {
+                                const hiddenField = document.createElement('input');
+                                hiddenField.type = 'hidden';
+                                hiddenField.name = key;
+                                hiddenField.value = paymentDetails[key];
+                                form.appendChild(hiddenField);
+                            }
+                        }
+
+                        // Append the form to the body and submit
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                }
+            };
+
+            // Initialize Razorpay instance with options and open payment modal
+            const rzp1 = new Razorpay(options);
+            rzp1.open();
+
+        } catch (error) {
+            console.error('Error creating Razorpay order:', error);
+            alert('Failed to create Razorpay order.');
+        }
+    } else if (selectedPaymentMethod === "COD") {
+        const paymentDetails = {
+            selectedAddressId: selectedAddressId,
+            selectedPaymentMethod: selectedPaymentMethod
+        };
+
+        try {
+            const response = await fetch('/user/orders/status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(paymentDetails)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to place order.');
+            }
+
+            const responseData = await response.json();
+
+            if (responseData.success) {
+                window.location.href = '/user/thankyou';
+            } else {
+                throw new Error('Failed to verify payment.');
+            }
+
+        } catch (error) {
+            console.error('Error processing order:', error);
+            alert('Failed to place order.');
+        }
+    }else if(selectedPaymentMethod === "wallet"){
+        const paymentDetails = {
+            selectedAddressId: selectedAddressId,
+            selectedPaymentMethod: selectedPaymentMethod
+        };
+        console.log("payment details:",paymentDetails);
+        try{
+            const response= await fetch('/user/orders/status',{
+                method:'POST',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body : JSON.stringify(paymentDetails)
+            })
+            if(!response.ok){
+                throw new Error("Failed to place the order via your wallet")
+            }
+
+            const data = await response.json()
+            if(data.success){
+                window.location.href = '/user/thankyou'
+            }else{
+                throw new Error('Cannot continue with Wallet payment. Check your balance')
+            }
+
+
+        }catch(err){
+            console.error("failed to pay via wallet",err);
+            alert('Failed to place order.');
+        }
+        }
+    }
+
+
+
     
+
     
 </script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </body>
 </html>
