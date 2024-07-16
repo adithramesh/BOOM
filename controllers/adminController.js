@@ -7,8 +7,6 @@ const Coupon = require('../models/coupon');
 const multer=require('multer')
 const bcrypt=require('bcrypt')
 const mongoose = require('mongoose');
-// const puppeteer = require('puppeteer');
-// const easyinvoice = require('easyinvoice');
 const { PDFDocument, rgb } = require('pdf-lib');
 const fs = require('fs').promises;
 
