@@ -7,9 +7,13 @@ const Coupon = require('../models/coupon');
 const multer=require('multer')
 const bcrypt=require('bcrypt')
 const mongoose = require('mongoose');
-const puppeteer = require('puppeteer');
-const easyinvoice = require('easyinvoice');
-const Excel = require('excel4node');
+// const puppeteer = require('puppeteer');
+// const easyinvoice = require('easyinvoice');
+const { PDFDocument, rgb } = require('pdf-lib');
+const fs = require('fs').promises;
+
+
+
 
 exports.getLoginPage=((req,res)=>{
     try{
@@ -290,7 +294,6 @@ exports.getDashboardPage = async (req, res) => {
 };
 
 
-// Function to generate sales report in PDF
 exports.postSalesReport = async (req, res) => {
     const { startDate, endDate } = req.body;
 
@@ -306,60 +309,93 @@ exports.postSalesReport = async (req, res) => {
             totalDiscount: orders.reduce((acc, order) => acc + (order.discount || 0), 0),
             orders: orders.map(order => ({
                 orderId: order.orderId,
-                date: order.date.toISOString().split('T')[0],
+                // date: order.date, // Format date to dd-mm-yyyy
+                date: new Date(order.date).toLocaleDateString('en-GB', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                  }), // Format date to dd-mm-yyyy
                 amount: order.amount,
                 discount: order.discount || 0
             }))
         };
 
-        // Prepare PDF invoice data
-        const invoiceData = {
-            documentTitle: 'Sales Report',
-            currency: 'INR',
-            taxNotation: 'GST',
-            marginTop: 25,
-            marginRight: 25,
-            marginLeft: 25,
-            marginBottom: 25,
-            logo: 'https://public.easyinvoice.cloud/img/logo_en_original.png',
-            sender: {
-                company: 'BOOM Apparel Shopping',
-                address: 'BOOM Pvt Ltd',
-                zip: '560 007',
-                city: 'Bangalore',
-                country: 'India'
-            },
-            invoiceNumber: '2021.0001',
-            invoiceDate: new Date().toISOString().split('T')[0],
-            products: salesReportData.orders.map((order, index) => ({
-                slNo: index + 1,
-                description: `Order ID: ${order.orderId}, Date: ${order.date}`,
-                tax: 0,
-                discount: order.discount || 0,
-                price: order.amount
-            })),
-            bottomNotice: 'This is a generated sales report.'
-        };
+        // Create PDF document
+        const pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage();
+        const { width, height } = page.getSize();
 
-        // Generate PDF using easyinvoice
-        const result = await easyinvoice.createInvoice(invoiceData);
-        const pdfBuffer = Buffer.from(result.pdf, 'base64');
+        // Add headers
+        page.drawText('BOOM Sales Report', { x: 50, y: height - 50, size: 18 });
+        // page.drawText(`From: ${startDate} To: ${endDate}`, { x: 50, y: height - 70, size: 14 });
+        page.drawText(`From: ${new Date(startDate).toLocaleDateString('en-GB', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+          })} To: ${new Date(endDate).toLocaleDateString('en-GB', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+          })}`, { x: 50, y: height - 70, size: 14 });
 
+        const table = [
+            // Headers
+            ['Order ID', 'Date', 'Amount', 'Discount'],
+            // Data rows
+            ...salesReportData.orders.map((order, index) => [
+                `${index + 1}. ${order.orderId}`, // Order ID with numbering
+                `${order.date}`, // Date
+                `Rs.${order.amount.toFixed(2)}`, // Amount
+                `Rs.${order.discount.toFixed(2)}` // Discount
+            ])
+        ];
+        
+        const tableTopY = height - 120;
+        const tableBottomY = 100;
+        const tableHeight = table.length * 20; // Adjust row height as needed
+        const tableWidth = 500; // Increased table width to accommodate orderId
+        const cellPadding = 10;
+        
+        // Define custom column widths
+        const columnWidths = [250, 100, 75, 75]; // Adjust column widths as needed
+        
+        // Draw table headers
+        table.forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+                const x = 50 + columnWidths.slice(0, colIndex).reduce((acc, width) => acc + width, 0);
+                const y = tableTopY - (rowIndex + 1) * 20 - cellPadding;
+                page.drawText(cell, { x, y, size: 12 });
+            });
+        });
+        
+
+        // Draw totals
+        page.drawText(`Total Orders: ${salesReportData.totalOrders}`, { x: 300, y: tableTopY - table.length * 20 - 40, size: 12 });
+        page.drawText(`Total Revenue: Rs.${salesReportData.totalRevenue.toFixed(2)}`, { x: 50, y: tableTopY - table.length * 20 - 60, size: 12 });
+        page.drawText(`Total Discount: Rs.${salesReportData.totalDiscount.toFixed(2)}`, { x: 50, y: tableTopY - table.length * 20 - 80, size: 12 });
+
+        // Save PDF to buffer
+        const pdfBytes = await pdfDoc.save();
+
+        // Send PDF as response
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
-        res.send(pdfBuffer);
+        res.send(Buffer.from(pdfBytes));
+
     } catch (error) {
         console.error('Error generating sales report', error);
         res.status(500).send('Error generating sales report');
     }
 };
 
-const excel4node = require('excel4node');
 
+
+const excel = require('excel4node');
+
+// Function to generate sales report in Excel
 exports.getExcelSalesReport = async (req, res) => {
     const { startDate, endDate } = req.query;
-    console.log("startDate:",startDate);
-    console.log("endDate:",endDate);
+
     try {
         const orders = await Order.find({
             date: { $gte: new Date(startDate), $lte: new Date(endDate) }
@@ -379,17 +415,14 @@ exports.getExcelSalesReport = async (req, res) => {
         };
 
         // Create a new instance of a Workbook class
-        const wb = new excel4node.Workbook();
+        const wb = new excel.Workbook();
 
         // Add a Worksheet to the workbook
         const ws = wb.addWorksheet('Sales Report');
 
         // Create a reusable style
         const style = wb.createStyle({
-            font: {
-                color: '#000000',
-                size: 12,
-            },
+            font: { color: '#000000', size: 12 },
             numberFormat: '₹#,##0.00; (₹#,##0.00); -',
         });
 
@@ -408,13 +441,16 @@ exports.getExcelSalesReport = async (req, res) => {
         });
 
         // Write to response
-        wb.write('SalesReport.xlsx', res);
+        const excelBuffer = await wb.writeToBuffer();
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=sales-report.xlsx');
+        res.send(excelBuffer);
+
     } catch (error) {
         console.error('Error generating Excel sales report', error);
         res.status(500).send('Error generating Excel sales report');
     }
 };
-
 
 
 exports.getCharts = async(req,res)=>{
