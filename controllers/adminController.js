@@ -937,15 +937,15 @@ exports.postUpdateOrderStatus=(async(req,res)=>{
             console.log("status from drop down:",status);
             order.orderStatus=status;
             await order.save();
-            if(status==='delivered'){
-                for (const item of order.items) {
-                    await Product.findOneAndUpdate(
-                      { _id: item.product, "sizes.size": item.size },
-                      { $inc: { "sizes.$.quantity": -item.quantity } },
-                      { new: true }
-                    );
-                  }
-            }
+            // if(status==='delivered'){
+            //     for (const item of order.items) {
+            //         await Product.findOneAndUpdate(
+            //           { _id: item.product, "sizes.size": item.size },
+            //           { $inc: { "sizes.$.quantity": -item.quantity } },
+            //           { new: true }
+            //         );
+            //       }
+            // }
             return res.redirect('/admin/orders')
         }
 

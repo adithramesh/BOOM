@@ -733,7 +733,7 @@ exports.createRazorpayOrder = async (req, res) => {
       return res.redirect('/user/cart');
     }
 
-    const amount = cart.totalPrice * 100; // Convert to paise
+    const amount = (cart.totalPrice +150) * 100 // Convert to paise
 
     const options = {
       amount: amount,
@@ -1173,7 +1173,7 @@ exports.postUpdateOrderStatus = async (req, res) => {
 
     console.log("Order status updated:", order.orderStatus);
 
-    if (order.paymentOption === "UPI" && order.paymentStatus === "Success") {
+    if (order.paymentOption === "UPI" && order.paymentStatus === "Success" || order.paymentOption === "wallet" && order.paymentStatus === "Success") {
       const refundAmount = order.amount;
       const userId = req.session.userId;
       const wallet = await Wallet.findOne({ userId });
