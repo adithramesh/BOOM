@@ -36,7 +36,9 @@ app.use(flash());
 //static files middleware
 app.use('/',express.static(path.join(__dirname, 'public', 'user')))
 app.use('/user', express.static(path.join(__dirname, 'public','user')))
-app.use('/admin', express.static(path.join(__dirname,'public','admin'))) 
+app.use('/admin', express.static(path.join(__dirname,'public','admin')))
+app.use("/admin/uploads", express.static(path.join(__dirname, "public", "admin", "uploads")));
+
 
 
 //view engine

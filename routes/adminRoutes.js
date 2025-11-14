@@ -3,7 +3,9 @@ const router=express.Router()
 const adminControllers=require('../controllers/adminController')
 const protectRoute=require('../middlewares/adminAuth')
 const path=require('path');
-router.use('/uploads', express.static(path.join(__dirname,'uploads')));
+// router.use('/uploads', express.static(path.join(__dirname,'uploads')));
+
+
 
 
 router.get("/login",adminControllers.getLoginPage)
