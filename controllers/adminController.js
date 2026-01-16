@@ -518,24 +518,55 @@ exports.getCustomers=async(req,res)=>{
     }
 }
 
-exports.postUpdateCustomerStatus=(async(req,res)=>{
-    try{
-        const {userId}=req.body
-        const user=await User.findById(userId)
-        if(!user){
-            return res.status(200).send("user not found")
-        }else{
-            user.isBlocked=!user.isBlocked;
-            await user.save();
-            return res.redirect('/admin/customers')
+// exports.postUpdateCustomerStatus=(async(req,res)=>{
+//     try{
+//         const {userId}=req.body
+//         const user=await User.findById(userId)
+//         if(!user){
+//             return res.status(200).send("user not found")
+//         }else{
+//             user.isBlocked=!user.isBlocked;
+//             await user.save();
+//             return res.redirect('/admin/customers')
+//         }
+
+//     }catch(err){
+//         console.error("error in updating the status of the customer",err);
+//         res.redirect('/admin/dashboard')
+//     }
+// })
+
+exports.postUpdateCustomerStatus = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({ 
+                success: false, 
+                error: "User not found" 
+            });
         }
-
-    }catch(err){
-        console.error("error in updating the status of the customer",err);
-        res.redirect('/admin/dashboard')
+        
+        // Toggle the blocked status
+        user.isBlocked = !user.isBlocked;
+        await user.save();
+        
+        // Return JSON response (not redirect!)
+        return res.json({ 
+            success: true, 
+            isBlocked: user.isBlocked,
+            userId: user._id
+        });
+        
+    } catch (err) {
+        console.error("Error in updating the status of the customer", err);
+        return res.status(500).json({ 
+            success: false, 
+            error: "Server error" 
+        });
     }
-})
-
+}
 exports.getProductPage=(async(req,res)=>{
     try{
         // Pagination
@@ -611,24 +642,54 @@ const fileFilter = (req, file, cb) => {
     }
   })
 
-  exports.postUpdateProductStatus=(async(req,res)=>{
-    try{
-        const {productId}=req.body
-        const product=await Product.findById(productId)
-        if(!product){
-            return res.status(200).send("product not found")
-        }else{
-            product.isBlocked=!product.isBlocked;
-            await product.save();
-            return res.redirect('/admin/products')
+//   exports.postUpdateProductStatus=(async(req,res)=>{
+//     try{
+//         const {productId}=req.body
+//         const product=await Product.findById(productId)
+//         if(!product){
+//             return res.status(200).send("product not found")
+//         }else{
+//             product.isBlocked=!product.isBlocked;
+//             await product.save();
+//             return res.redirect('/admin/products')
+//         }
+
+//     }catch(err){
+//         console.error("error in updating the status of the customer",err);
+//         res.redirect('/admin/dashboard')
+//     }
+// })
+
+
+exports.postUpdateProductStatus = async (req, res) => {
+    try {
+        const { productId } = req.body;
+        const product = await Product.findById(productId);
+        
+        if (!product) {
+            return res.status(404).json({ 
+                success: false, 
+                error: "Product not found" 
+            });
         }
-
-    }catch(err){
-        console.error("error in updating the status of the customer",err);
-        res.redirect('/admin/dashboard')
+        
+        product.isBlocked = !product.isBlocked;
+        await product.save();
+        
+        return res.json({ 
+            success: true, 
+            isBlocked: product.isBlocked,
+            productId: product._id
+        });
+        
+    } catch (err) {
+        console.error("Error in updating the status of the product", err);
+        return res.status(500).json({ 
+            success: false, 
+            error: "Server error" 
+        });
     }
-})
-
+}
 exports.getEditProduct=async(req,res)=>{
     try {
         const product = await Product.findById(req.params.id);
@@ -823,24 +884,36 @@ exports.postEditCategory = async (req, res) => {
     }
 };
 
-exports.postUpdateCategoryStatus=(async(req,res)=>{
-    try{
-        const {categoryId}=req.body
-        const category=await Category.findById(categoryId)
-        if(!category){
-            return res.status(200).send("product not found")
-        }else{
-            category.isBlocked=!category.isBlocked;
-            await category.save();
-            return res.redirect('/admin/categories')
+
+exports.postUpdateCategoryStatus = async (req, res) => {
+    try {
+        const { categoryId } = req.body;
+        const category = await Category.findById(categoryId);
+        
+        if (!category) {
+            return res.status(404).json({ 
+                success: false, 
+                error: "Category not found" 
+            });
         }
-
-    }catch(err){
-        console.error("error in updating the status of the customer",err);
-        res.redirect('/admin/dashboard')
+        
+        category.isBlocked = !category.isBlocked;
+        await category.save();
+        
+        return res.json({ 
+            success: true, 
+            isBlocked: category.isBlocked,
+            categoryId: category._id
+        });
+        
+    } catch (err) {
+        console.error("Error in updating the status of the category", err);
+        return res.status(500).json({ 
+            success: false, 
+            error: "Server error" 
+        });
     }
-})
-
+}
 
 exports.getAddCategories=(req,res)=>{
     try{
@@ -967,23 +1040,38 @@ exports.getCoupons = async (req, res) => {
     }
 };
 
-exports.postUpdateCouponStatus=(async(req,res)=>{
-    try{
-        const {couponId}=req.body
-        const coupon=await Coupon.findById(couponId)
-        if(!coupon){
-            return res.status(200).send("Coupon not found")
-        }else{
-            coupon.status=!coupon.status;
-            await coupon.save();
-            return res.redirect('/admin/coupons')
-        }
 
-    }catch(err){
-        console.error("error in updating the status of the coupon",err);
-        res.redirect('/admin/dashboard')
+
+exports.postUpdateCouponStatus = async (req, res) => {
+    try {
+        const { couponId } = req.body;
+        const coupon = await Coupon.findById(couponId);
+        
+        if (!coupon) {
+            return res.status(404).json({ 
+                success: false, 
+                error: "Coupon not found" 
+            });
+        }
+        
+        coupon.status = !coupon.status;
+        await coupon.save();
+        
+        return res.json({ 
+            success: true, 
+            status: coupon.status,
+            couponId: coupon._id
+        });
+        
+    } catch (err) {
+        console.error("Error in updating the status of the coupon", err);
+        return res.status(500).json({ 
+            success: false, 
+            error: "Server error" 
+        });
     }
-})
+}
+
 
 // Render form to add a new coupon
 exports.getAddCoupon = (req, res) => {

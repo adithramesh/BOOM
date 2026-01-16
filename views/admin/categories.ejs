@@ -111,48 +111,48 @@
                     <%= messages.success %>
                 </div>
             <% } %>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Sl. No.</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Number of Products</th>
-                        <th>Discount</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% categoriesWithProductCount.forEach((category, index) => { %>
-                        <tr>
-                            <td><%= index + startIndex %></td>
-                            <td><%= category.name %></td>
-                            <td><%= category.description %></td>
-                            <td><%= category.productCount %></td> <!-- Display product count -->
-                            <td><%= category.discountPercentage %>%</td>
-                            <td>
-                                <% if(category.isBlocked) { %>
-                                    <span class="badge bg-danger">Blocked</span>
-                                <% } else { %>
-                                    <span class="badge bg-success">Active</span>
-                                <% } %>
-                            </td>
-                            <td>
-                                <form action="/admin/update-category-status" method="POST" style="display: inline;">
-                                    <input type="hidden" name="categoryId" value="<%= category._id %>">
-                                    <button type="submit" class="btn btn-sm btn-success">Change Status</button>
-                                </form>
-                                <form action="/admin/edit-category/<%= category._id %>" method="GET" style="display: inline;">
-                                    <button type="submit" class="btn btn-sm btn-primary">Edit</button>
-                                </form>
-                                
-                                   
-                            </td>
-                        </tr>
-                    <% }); %>
-                </tbody>
-            </table>
+           <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Sl. No.</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Number of Products</th>
+            <th>Discount</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% categoriesWithProductCount.forEach((category, index) => { %>
+            <tr data-category-id="<%= category._id %>">
+                <td><%= index + startIndex %></td>
+                <td><%= category.name %></td>
+                <td><%= category.description %></td>
+                <td><%= category.productCount %></td>
+                <td><%= category.discountPercentage %>%</td>
+                <td class="status-cell">
+                    <% if(category.isBlocked) { %>
+                        <span class="badge bg-danger">Blocked</span>
+                    <% } else { %>
+                        <span class="badge bg-success">Active</span>
+                    <% } %>
+                </td>
+                <td>
+                    <button 
+                        type="button" 
+                        class="btn btn-sm <%= category.isBlocked ? 'btn-success' : 'btn-danger' %> status-toggle-btn"
+                        onclick="toggleCategoryStatus('<%= category._id %>')"
+                    >
+                        <%= category.isBlocked ? 'Unblock' : 'Block' %>
+                    </button>
+                    <a href="/admin/edit-category/<%= category._id %>" class="btn btn-sm btn-primary">Edit</a>
+                </td>
+            </tr>
+        <% }); %>
+    </tbody>
+</table>
+
             <!-- pagination -->
             <div class="row">  
                 <div class="col-md-12">
@@ -255,5 +255,51 @@
             });
         });
     </script>
+
+    <script>
+async function toggleCategoryStatus(categoryId) {
+    const row = document.querySelector(`tr[data-category-id="${categoryId}"]`);
+    const statusCell = row.querySelector('.status-cell');
+    const button = row.querySelector('.status-toggle-btn');
+    const originalButtonText = button.textContent;
+    
+    try {
+        button.disabled = true;
+        button.textContent = 'Processing...';
+        
+        const response = await fetch('/admin/update-category-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ categoryId: categoryId })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update status');
+        }
+        
+        const data = await response.json();
+        
+        if (data.isBlocked) {
+            statusCell.innerHTML = '<span class="badge bg-danger">Blocked</span>';
+            button.className = 'btn btn-sm btn-success status-toggle-btn';
+            button.textContent = 'Unblock';
+        } else {
+            statusCell.innerHTML = '<span class="badge bg-success">Active</span>';
+            button.className = 'btn btn-sm btn-danger status-toggle-btn';
+            button.textContent = 'Block';
+        }
+        
+        button.disabled = false;
+        
+    } catch (error) {
+        console.error('Error updating category status:', error);
+        alert('Failed to update category status. Please try again.');
+        button.textContent = originalButtonText;
+        button.disabled = false;
+    }
+}
+</script>
 </body>
 </html>

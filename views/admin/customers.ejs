@@ -180,8 +180,6 @@
 
 <!-- the main thing -->
 <h4>List of customers/users</h4>
-
-
 <table>
     <thead>
         <tr>
@@ -194,12 +192,11 @@
     </thead>
     <tbody>
         <% users.forEach((user, index) => { %>
-            <tr>
+            <tr data-user-id="<%= user._id %>">
                 <td><%= index + 1 %></td>
-                <td><%= user.username %></td> <!-- Corrected here -->
+                <td><%= user.username %></td>
                 <td><%= user.phoneNumber %></td>
-                <!-- <td><%= user.isBlocked ? 'Blocked' : 'Active' %></td> -->
-                <td>
+                <td class="status-cell">
                     <% if(user.isBlocked) { %>
                         <span class="badge bg-danger">Blocked</span>
                     <% } else { %>
@@ -207,15 +204,20 @@
                     <% } %>
                 </td>
                 <td>
-                    <form action="/admin/update-customer-status" method="POST">
-                        <input type="hidden" name="userId" value="<%= user._id %>">
-                        <button type="submit" class="btn btn-sm btn-success">Change Status</button>
-                    </form>
+                    <button 
+                        type="button" 
+                        class="btn btn-sm <%= user.isBlocked ? 'btn-success' : 'btn-danger' %>"
+                        onclick="toggleUserStatus('<%= user._id %>')"
+                    >
+                        <%= user.isBlocked ? 'Unblock' : 'Block' %>
+                    </button>
                 </td>
             </tr>
         <% }); %>
     </tbody>
 </table>
+
+
 
 
 
@@ -271,6 +273,66 @@
                 }
             });
         });
+    </script>
+
+    <script>
+    async function toggleUserStatus(userId, currentBlockedStatus) {
+    // Get references to the elements we need to update
+    const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+    const statusCell = row.querySelector('.status-cell');
+    const button = row.querySelector('button');
+    
+    // Save original button text in case of error
+    const originalButtonText = button.textContent;
+    
+    try {
+        // Disable button and show loading state
+        button.disabled = true;
+        button.textContent = 'Processing...';
+        
+        // Send AJAX request to server
+        const response = await fetch('/admin/update-customer-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: userId })
+        });
+        
+        // Check if request was successful
+        if (!response.ok) {
+            throw new Error('Failed to update status');
+        }
+        
+        // Get the JSON response from server
+        const data = await response.json();
+        
+        // Update the UI based on new status
+        if (data.isBlocked) {
+            // User is now blocked
+            statusCell.innerHTML = '<span class="badge bg-danger">Blocked</span>';
+            button.className = 'btn btn-sm btn-success';
+            button.textContent = 'Unblock';
+        } else {
+            // User is now active
+            statusCell.innerHTML = '<span class="badge bg-success">Active</span>';
+            button.className = 'btn btn-sm btn-danger';
+            button.textContent = 'Block';
+        }
+        
+        // Re-enable button
+        button.disabled = false;
+        
+    } catch (error) {
+        // Handle errors
+        console.error('Error updating user status:', error);
+        alert('Failed to update user status. Please try again.');
+        
+        // Restore button to original state
+        button.textContent = originalButtonText;
+        button.disabled = false;
+    }
+}
     </script>
 </body>
 
